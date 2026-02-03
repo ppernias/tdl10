@@ -1,0 +1,106 @@
+% ============================================================================
+% III. DE ADL A TDL
+% ============================================================================
+
+\section{De ADL a TDL: Motivación y Principios de Diseño}
+
+Esta sección presenta el trabajo previo con \adl{} y analiza las motivaciones para su evolución hacia \tdl{}.
+
+\subsection{Assistant Description Language (ADL)}
+
+Nuestro trabajo previo con \adl{} \cite{pernias2025adl} introdujo un lenguaje estructurado basado en \yamlformat{} para que los docentes codificaran asistentes educativos basados en LLM. \adl{} demostró que es posible capturar la expertise pedagógica de un docente en una especificación formal que un LLM puede ejecutar fielmente.
+
+\adl{} definió cuatro tipos de herramientas pedagógicas:
+
+\begin{itemize}
+    \item \textbf{Commands} (/command): Acciones pedagógicas autocontenidas, desde explicaciones simples hasta procedimientos multi-paso. Cada command encapsula una estrategia de enseñanza específica.
+    \item \textbf{Options} (/option): Modificadores que ajustan el comportamiento global sin asociarse a contenido específico, como nivel de detalle o estilo de comunicación.
+    \item \textbf{Decorators} (+++decorator): Estilos pedagógicos que modifican cómo se ejecuta un command. Por ejemplo, +++socratic transforma cualquier command en una serie de preguntas guiadas.
+    \item \textbf{Workflows} (/workflow): Secuencias automatizadas de commands para lecciones completas, permitiendo estructurar sesiones de aprendizaje coherentes.
+\end{itemize}
+
+Un piloto con 30 estudiantes en un curso de Turismo mostró resultados positivos: el 70\% usó el asistente frecuentemente, el 83\% valoró las respuestas como útiles, y el 100\% recomendó continuar usándolo. Los docentes percibieron la herramienta como una extensión de su práctica pedagógica, no como un reemplazo.
+
+\subsection{Análisis Crítico de ADL para Tutorías}
+
+La experiencia con \adl{} reveló tanto fortalezas como limitaciones cuando se aplica específicamente a tutorías educativas estructuradas.
+
+\subsubsection{Fortalezas de ADL}
+
+Los commands permitieron encapsular estrategias de enseñanza complejas, los decorators añadieron flexibilidad estilística, y los workflows automatizaron secuencias completas. La separación entre la especificación (creada por el docente) y la ejecución (realizada por el LLM) preservó la autoría pedagógica.
+
+\subsubsection{Limitaciones Identificadas}
+
+Sin embargo, identificamos cuatro limitaciones principales para el uso educativo especializado:
+
+\textbf{Arquitectura monolítica}: Todo ---identidad del asistente, comportamientos, herramientas, contenido--- se define en un único archivo \adl{}. Esto dificulta la reutilización: si dos cursos diferentes quieren usar la misma metodología socrática, deben duplicar las definiciones de decorators y workflows.
+
+\textbf{Método pedagógico implícito}: El enfoque pedagógico queda disperso entre múltiples commands y decorators. No existe una representación explícita de la secuencia instruccional como unidad coherente. Un observador externo tendría dificultades para identificar qué modelo pedagógico sigue el asistente.
+
+\textbf{Contenido embebido}: El contenido a enseñar se incorpora directamente en los prompts de los commands. Actualizar el contenido requiere modificar la especificación \adl{}, aumentando el riesgo de introducir errores y dificultando que expertos en contenido (sin conocimiento de \adl{}) contribuyan directamente.
+
+\textbf{Dificultad para escalar metodologías}: Un diseñador instruccional que desarrolle una metodología efectiva no puede compartirla fácilmente con otros docentes. Cada nuevo curso requiere recrear la estructura metodológica desde cero.
+
+\subsection{Lecciones del Piloto ADL}
+
+Durante el piloto de \adl{}, observamos un fenómeno revelador: los docentes invocaban los commands en secuencias notablemente consistentes. Por ejemplo, una profesora de Turismo siempre comenzaba con /DAFO\_strengths +++step-by-step, seguido de /DAFO\_weaknesses +++socratic, y finalizaba con /DAFO\_review +++critique. Esta secuencia se repetía idénticamente en diferentes sesiones y grupos.
+
+Esta observación sugirió que los docentes tienen \textbf{firmas metodológicas} ---patrones estables de enseñanza que aplican independientemente del contenido específico. Los workflows de \adl{} capturaban estas secuencias, pero las trataban como específicas de cada curso en lugar de como metodologías reutilizables.
+
+La conclusión fue clara: necesitábamos separar el \textbf{cómo enseñar} (la metodología, aplicable a múltiples contenidos) del \textbf{qué enseñar} (el contenido específico de cada curso). Esta separación es precisamente lo que \tdl{} implementa.
+
+\subsection{Principios de Diseño de TDL}
+
+Basándonos en este análisis, establecimos cinco principios fundamentales para el diseño de \tdl{}:
+
+\begin{table}[htbp]
+\caption{Principios de Diseño de TDL}
+\label{tab:principios}
+\centering
+\begin{tabular}{p{2cm}p{5.5cm}}
+\toprule
+\textbf{Principio} & \textbf{Descripción} \\
+\midrule
+Separación de responsabilidades & Cada capa de la arquitectura tiene una única responsabilidad bien definida \\
+\addlinespace
+Reutilización metodológica & Los modelos instruccionales son plantillas reutilizables entre múltiples cursos \\
+\addlinespace
+Alineamiento con DI & Los eventos instruccionales se alinean con teorías de diseño instruccional establecidas \\
+\addlinespace
+Independencia del contenido & El contenido fuente se mantiene separado de la estructura metodológica \\
+\addlinespace
+Portabilidad & La especificación funciona en cualquier plataforma LLM sin modificaciones \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El principio de \textbf{separación de responsabilidades} implica que modificar el contenido no requiere tocar la metodología, y viceversa. La \textbf{reutilización metodológica} permite que un modelo instruccional validado se aplique a cursos de diferentes disciplinas. El \textbf{alineamiento con diseño instruccional} garantiza que \tdl{} hable el lenguaje de los profesionales de la educación. La \textbf{independencia del contenido} facilita que expertos en la materia contribuyan sin conocer \tdl{}. La \textbf{portabilidad} evita el vendor lock-in y maximiza la adopción.
+
+\subsection{De Monolítico a Desacoplado}
+
+La transición de \adl{} a \tdl{} puede resumirse como un cambio de arquitectura monolítica a arquitectura desacoplada:
+
+\begin{table}[htbp]
+\caption{Comparativa entre ADL y TDL}
+\label{tab:comparativa}
+\centering
+\begin{tabular}{p{1.8cm}p{2.5cm}p{2.5cm}}
+\toprule
+\textbf{Aspecto} & \textbf{ADL} & \textbf{TDL} \\
+\midrule
+Alcance & Asistentes genéricos & Tutorías educativas \\
+\addlinespace
+Arquitectura & Monolítica (1 archivo) & 4 capas desacopladas \\
+\addlinespace
+Método pedagógico & Implícito en commands & Explícito en modelo \\
+\addlinespace
+Reutilización & Por command individual & Por modelo completo \\
+\addlinespace
+Contenido & Embebido en prompts & Desacoplado \\
+\addlinespace
+Alineamiento con DI & Parcial & Directo (Gagné, Bloom) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\adl{} permanece como una opción válida para asistentes no estrictamente educativos o para casos donde la simplicidad de un único archivo es preferible. \tdl{} está optimizado específicamente para tutorías donde el diseño instruccional formal aporta valor.

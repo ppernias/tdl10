@@ -1,0 +1,103 @@
+% ============================================================================
+% VIII. DISCUSIÓN
+% ============================================================================
+
+\section{Discusión}
+
+\subsection{¿Qué Aporta TDL?}
+
+\tdl{} no introduce conceptos pedagógicos novedosos. Su aportación es de \textbf{implementación pragmática}: traduce principios establecidos de diseño instruccional a un formato que funciona sobre LLM comerciales sin requerir infraestructura adicional.
+
+Específicamente, \tdl{} ofrece:
+
+\begin{itemize}
+    \item \textbf{Portabilidad inmediata}: Los mismos archivos funcionan en ChatGPT, Claude, Gemini y OpenWebUI.
+    
+    \item \textbf{Formato accesible}: YAML es más legible que XML para usuarios no técnicos.
+    
+    \item \textbf{Reutilización demostrada}: Un modelo instruccional puede aplicarse a múltiples cursos de diferentes disciplinas.
+    
+    \item \textbf{Especificación formal}: JSON Schemas permiten validación automática.
+    
+    \item \textbf{Alineamiento con teoría}: Los eventos instruccionales corresponden a marcos establecidos (Gagné, Bloom).
+\end{itemize}
+
+\subsection{Comparativa con Trabajos Relacionados}
+
+En relación con otros lenguajes de estructuración de prompts:
+
+\textbf{PDL (IBM)}: Ofrece capacidades técnicas sofisticadas (sistema de tipos, llamadas a funciones) pero está orientado a desarrolladores, no a educadores. No incorpora conceptos de diseño instruccional.
+
+\textbf{POML (Microsoft)}: Su sintaxis XML proporciona gran expresividad pero introduce complejidad innecesaria para el caso de uso educativo. El sistema de estilos CSS es potente pero alejado del lenguaje de los docentes.
+
+\textbf{IMS Learning Design}: Conceptualmente completo pero fracasó en adopción por problemas de ecosistema, no de complejidad conceptual. \tdl{} intenta aprender de este fracaso priorizando simplicidad y portabilidad.
+
+\tdl{} ocupa un nicho específico: combina la legibilidad de \yamlformat{} con conceptos propios del diseño instruccional (eventos, modelos pedagógicos, secuencias de aprendizaje) que ni PDL ni POML contemplan.
+
+\subsection{Implicaciones para el Diseño Instruccional}
+
+La arquitectura de \tdl{} sugiere una distribución natural de roles profesionales:
+
+\begin{itemize}
+    \item \textbf{Diseñador instruccional senior}: Crea y valida modelos instruccionales reutilizables. Requiere conocimiento profundo de teorías de aprendizaje.
+    
+    \item \textbf{Docente / Diseñador de curso}: Crea secuencias de aprendizaje aplicando modelos existentes. Requiere conocimiento del contenido y familiaridad básica con \yamlformat{}.
+    
+    \item \textbf{Experto en contenido}: Crea y actualiza el contenido fuente. Solo requiere dominio de la materia.
+\end{itemize}
+
+Esta separación permite colaboración eficiente: un diseñador instruccional puede crear un modelo ``Aprendizaje Basado en Problemas'' que luego usen docentes de Medicina, Ingeniería y Derecho, cada uno con su contenido específico.
+
+\subsection{Consideraciones Éticas}
+
+\tdl{} mantiene al docente como autor y responsable último del proceso educativo. El LLM ejecuta lo que el docente ha especificado, preservando la autoría pedagógica. La transparencia de \yamlformat{} permite que cualquier observador inspeccione exactamente qué metodología sigue el tutor.
+
+Sin embargo, persisten preocupaciones:
+
+\begin{itemize}
+    \item \textbf{Sesgos del LLM}: El modelo subyacente puede introducir sesgos no especificados en \tdl{}.
+    
+    \item \textbf{Dependencia tecnológica}: Los estudiantes pueden desarrollar expectativas de disponibilidad continua que los tutores humanos no pueden satisfacer.
+    
+    \item \textbf{Privacidad}: Las conversaciones con el tutor se procesan en servidores de terceros (OpenAI, Anthropic, Google).
+\end{itemize}
+
+\subsection{Limitaciones}
+
+Reconocemos varias limitaciones de \tdl{} en su estado actual:
+
+\textbf{Dependencia del LLM subyacente}: \tdl{} asume que el LLM seguirá fielmente las instrucciones del Engine y los prompts. En la práctica, los modelos pueden desviarse ocasionalmente, especialmente en conversaciones largas.
+
+\textbf{Curva de aprendizaje para YAML}: Aunque \yamlformat{} es más legible que otros formatos, sigue requiriendo atención a la indentación y sintaxis. Un editor visual que genere \yamlformat{} automáticamente facilitaría la adopción.
+
+\textbf{Pedagogías improvisadas}: \tdl{} está optimizado para metodologías estructuradas con secuencias predefinidas. Enfoques altamente improvisados o emergentes pueden no beneficiarse tanto de la formalización.
+
+\textbf{Ausencia de evaluación empírica}: Este artículo presenta \tdl{} como arquitectura y especificación. La validación empírica con estudiantes reales está planificada pero aún no ejecutada.
+
+\textbf{Ausencia de student model}: \tdl{} no implementa un modelo del estudiante. No hay diagnóstico cognitivo, seguimiento de misconceptions, ni adaptación basada en el historial del aprendiz.
+
+\subsection{Riesgos Heredados de IMS LD}
+
+La historia de IMS Learning Design sugiere cautela. A pesar de su solidez conceptual, IMS LD no logró adopción generalizada. \tdl{} mitiga algunos de los riesgos identificados:
+
+\begin{itemize}
+    \item \textbf{Ecosistema}: \tdl{} no requiere herramientas especiales; cualquier editor de texto sirve.
+    \item \textbf{Portabilidad}: \tdl{} funciona en múltiples plataformas sin modificación.
+    \item \textbf{Terminología}: \tdl{} usa términos familiares (eventos, prompts, unidades).
+\end{itemize}
+
+Sin embargo, \tdl{} hereda el riesgo fundamental de que el esfuerzo de formalización no se perciba proporcional al beneficio obtenido. Solo la validación empírica determinará si los docentes adoptan \tdl{} en la práctica.
+
+\subsection{Lo Que TDL No Es}
+
+Es importante reiterar lo que \tdl{} no pretende ser:
+
+\begin{itemize}
+    \item \tdl{} \textbf{no es un ITS completo}: Carece de los componentes de diagnóstico y adaptación que definen a los ITS tradicionales.
+    
+    \item \tdl{} \textbf{no garantiza efectividad}: Un tutor \tdl{} mal diseñado será tan inefectivo como cualquier otra instrucción mal diseñada.
+    
+    \item \tdl{} \textbf{no reemplaza al docente}: El docente sigue siendo el autor del diseño pedagógico; \tdl{} solo formaliza y escala su expertise.
+    
+    \item \tdl{} \textbf{no resuelve limitaciones de los LLM}: Si el modelo subyacente no puede seguir instrucciones complejas, \tdl{} no puede compensarlo.
+\end{itemize}

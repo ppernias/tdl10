@@ -1,0 +1,87 @@
+% ============================================================================
+% I. INTRODUCCIÓN
+% ============================================================================
+\section{Introducción}
+
+\subsection{El Desafío de Escalar la Tutoría Personalizada}
+
+El célebre ``problema 2 sigma'' identificado por Benjamin Bloom \cite{bloom1984} estableció que los estudiantes que reciben tutoría individualizada con aprendizaje por dominio (mastery learning) superan significativamente a aquellos que reciben instrucción convencional en grupo. Sin embargo, revisiones posteriores han matizado esta afirmación. VanLehn \cite{vanlehn2011}, en un meta-análisis de 54 estudios, encontró que el tamaño de efecto real de la tutoría humana es $d = 0.79$, no las dos desviaciones estándar originalmente propuestas. Kulik y Fletcher \cite{kulik2016}, analizando 50 evaluaciones controladas de Sistemas de Tutoría Inteligente (ITS), reportaron un tamaño de efecto mediano de $d = 0.66$. Ma et al. \cite{ma2014}, con 107 tamaños de efecto de 73 estudios, encontraron que los ITS no difieren significativamente de la tutoría humana individualizada ($g = -0.11$, no significativo).
+
+Estos hallazgos tienen una implicación importante: los ITS bien diseñados ya han demostrado ser estadísticamente equivalentes a tutores humanos. El desafío contemporáneo no es alcanzar una meta idealizada de ``2 sigmas'', sino hacer accesible esta efectividad probada a escala, reduciendo el costo y complejidad de desarrollo que históricamente han limitado la adopción de ITS.
+
+\subsection{LLMs como Tutores: Promesas y Limitaciones Documentadas}
+
+Los Modelos de Lenguaje de Gran Escala (LLM) como GPT-4, Claude o Gemini han generado un interés creciente en su aplicación como tutores educativos \cite{lee2024impact}. Ofrecen ventajas aparentes: pueden mantener conversaciones en lenguaje natural, están disponibles continuamente, y pueden desplegarse sin la infraestructura técnica que requieren los ITS tradicionales. Kestin et al. \cite{kestin2025} reportaron resultados prometedores: en un experimento controlado, estudiantes que usaron un tutor de IA superaron significativamente a aquellos que recibieron instrucción activa presencial.
+
+No obstante, la investigación reciente documenta una limitación fundamental: los LLM no están intrínsecamente alineados con objetivos pedagógicos. Tack y Piech \cite{tack2022} demostraron que los LLM actuales no son ``buenos tutores por defecto'': su objetivo de maximizar la utilidad entra en conflicto con estrategias tutoriales efectivas que implican desafiar productivamente al estudiante. Macina et al. \cite{macina2023} confirmaron que los modelos de lenguaje, sin modificaciones, proporcionan respuestas directas en lugar de guiar mediante preguntas. Borchers et al. \cite{borchers2025}, en un estudio reciente, encontraron que GPT-4 ``proporciona retroalimentación excesivamente directa que diverge de la tutoría efectiva'' y muestra ``adaptividad mínima'' a errores estudiantiles. Puech et al. \cite{puech2024} exploraron técnicas para orientar LLMs hacia comportamientos pedagógicos específicos como el Productive Failure, con resultados prometedores.
+
+Esta limitación tiene raíces arquitectónicas. Los ITS tradicionales incorporan un \textit{student model} que rastrea el conocimiento, habilidades y misconceptions del aprendiz, permitiendo adaptación fina \cite{nwana1990}. Los LLM carecen de este componente: no mantienen un modelo persistente del estudiante entre sesiones y tienen capacidad limitada para diagnosticar el estado cognitivo del aprendiz en tiempo real \cite{scarlatos2025}.
+
+\subsection{Antecedentes: La Separación Metodología-Contenido}
+
+La idea de separar la metodología instruccional del contenido a enseñar no es nueva. Tiene raíces en la Component Display Theory (CDT) de Merrill \cite{merrill1983}, quien propuso que las estrategias instruccionales pueden especificarse independientemente del contenido de dominio. La Instructional Transaction Theory (ITT) \cite{merrill1991} formalizó este principio mediante los \textit{transaction shells}: ``algoritmos instruccionales que pueden usarse con diferentes tópicos de contenido siempre que estos tópicos sean de un tipo similar de conocimiento''.
+
+IMS Learning Design \cite{koper2005} fue el intento más ambicioso de estandarizar esta separación. Propuso un metalenguaje basado en XML para especificar ``plantillas pedagógicas'' reutilizables. Sin embargo, a pesar de más de dos décadas desde su publicación, IMS LD no logró adopción generalizada. Derntl et al. \cite{derntl2012} investigaron las causas y encontraron un resultado sorprendente: en un estudio con 21 profesores universitarios, el 78\% logró conformidad con soluciones expertas tras solo 45 minutos de introducción. La complejidad conceptual \textit{no} fue la barrera principal. Las barreras documentadas fueron otras: ecosistema de herramientas inmaduro \cite{griffiths2005}, alto esfuerzo de desarrollo \cite{berggren2005}, y desajuste entre la terminología del lenguaje y los conceptos que los docentes usan para planificar \cite{neumann2008}.
+
+En el ámbito de los ITS, el framework GIFT \cite{sottilare2012} implementa una arquitectura modular que separa el módulo pedagógico del módulo de dominio, permitiendo reutilizar estrategias instruccionales. REDEEM \cite{ainsworth2002} introdujo el concepto de \textit{pedagogical overlay}: los docentes importan contenido existente y superponen su expertise de enseñanza mediante configuraciones pedagógicas.
+
+\subsection{Lenguajes de Prompts: PDL y POML}
+
+Más recientemente, el campo del prompt engineering ha producido lenguajes formales para estructurar interacciones con LLM. IBM Research desarrolló el Prompt Declaration Language (PDL) \cite{ibm2024pdl}, un DSL basado en YAML con gramática formal y sistema de tipos. Microsoft Research propuso POML (Prompt Orchestration Markup Language) \cite{zhang2025poml}, un lenguaje de marcado inspirado en HTML con componentes semánticos como \texttt{<role>} y \texttt{<task>}. POML incorpora características avanzadas como un sistema de estilos similar a CSS para separar contenido de presentación, manejo nativo de datos multimodales, y un motor de plantillas con variables, bucles y condicionales.
+
+Sin embargo, la sintaxis basada en XML de POML presenta una barrera de entrada para usuarios no técnicos: requiere comprender tags de apertura y cierre, atributos, anidamiento correcto, y caracteres de escape. Además, ni PDL ni POML incorporan conceptos de diseño instruccional: carecen de nociones como eventos de aprendizaje, secuencias pedagógicas, o separación explícita entre metodología y contenido educativo.
+
+Estos lenguajes establecen un precedente relevante: es legítimo y útil crear lenguajes de dominio específico para estructurar interacciones con LLM. La pregunta es cómo hacerlo para el dominio educativo.
+
+\subsection{Posicionamiento del Trabajo}
+
+Este artículo presenta el Tutor Description Language (\tdl{}), una evolución de nuestro trabajo previo con \adl{} (Assistant Description Language) \cite{pernias2025adl}, especializada en tutorías educativas. \tdl{} no pretende ser conceptualmente novedoso: implementa el principio establecido de separación metodología-contenido, adaptándolo a la realidad de los LLM comerciales actuales.
+
+\tdl{} se posiciona en la intersección de tres líneas de trabajo:
+
+\begin{enumerate}
+    \item \textbf{Herramientas de autoría de ITS}: Como CTAT \cite{aleven2009} y GIFT \cite{sottilare2012}, \tdl{} busca reducir la barrera técnica para crear tutores. A diferencia de estos, \tdl{} no requiere infraestructura propia: se despliega sobre plataformas LLM comerciales existentes.
+    
+    \item \textbf{Estándares de diseño instruccional}: Como IMS Learning Design \cite{koper2005}, \tdl{} formaliza la separación entre metodología y contenido. A diferencia de IMS LD, \tdl{} prioriza la simplicidad sintáctica (YAML vs. XML) y evita la completitud formal en favor de la usabilidad.
+    
+    \item \textbf{Lenguajes de prompts}: Como PDL \cite{ibm2024pdl} y POML \cite{zhang2025poml}, \tdl{} es un DSL para estructurar interacciones con LLM. A diferencia de estos, \tdl{} incorpora conceptos específicos de diseño instruccional y está orientado a educadores, no a desarrolladores.
+\end{enumerate}
+
+\subsection{Contribuciones y Estructura del Artículo}
+
+Las contribuciones principales de este trabajo son:
+
+\begin{itemize}
+    \item Una \textbf{arquitectura de cuatro capas} que separa el cómo enseñar del qué enseñar, permitiendo la reutilización de modelos instruccionales.
+    \item El concepto de \textbf{modelo instruccional como componente explícito} y reutilizable, alineado con teorías de diseño instruccional de Gagné y Bloom.
+    \item Una \textbf{especificación formal completa} de \tdl{} como DSL, con sintaxis YAML y validación mediante JSON Schema.
+    \item Dos \textbf{modelos instruccionales de referencia}: uno interactivo basado en la taxonomía de Bloom, y uno expositivo.
+    \item \textbf{Demostración de portabilidad} entre plataformas LLM comerciales (ChatGPT, Claude, Gemini, OpenWebUI).
+    \item Una \textbf{agenda de investigación} con hipótesis específicas para validar la efectividad de \tdl{}.
+\end{itemize}
+
+Es importante explicitar lo que \tdl{} \textit{no} es y \textit{no} pretende:
+
+\begin{itemize}
+    \item \tdl{} \textbf{no es un ITS completo}: carece de \textit{student model} para diagnóstico cognitivo individualizado.
+    \item \tdl{} \textbf{no garantiza efectividad pedagógica}: estructura la interacción pero no asegura resultados de aprendizaje.
+    \item \tdl{} \textbf{no ha sido validado empíricamente}: este artículo presenta la especificación y propone estudios futuros.
+    \item \tdl{} \textbf{no resuelve las limitaciones de los LLM}: la adaptividad sigue dependiendo del modelo subyacente.
+\end{itemize}
+
+El resto del artículo se organiza como sigue: la Sección II revisa el estado del arte en ITS y herramientas de autoría; la Sección III analiza la evolución de \adl{} a \tdl{}; la Sección IV presenta la arquitectura de cuatro capas; la Sección V detalla los componentes de \tdl{}; la Sección VI profundiza en los modelos instruccionales; la Sección VII describe la portabilidad; la Sección VIII discute las implicaciones y limitaciones; y la Sección IX concluye con direcciones de trabajo futuro.
+
+\subsection{Justificación Terminológica: ¿Por Qué ``Language''?}
+
+El uso del término ``Language'' requiere justificación. Según van Deursen, Klint y Visser \cite{vandeursen2000}, un Domain-Specific Language (DSL) es ``un lenguaje de programación o especificación ejecutable que ofrece, mediante notaciones y abstracciones apropiadas, poder expresivo enfocado en un dominio particular''. Fowler \cite{fowler2010} identifica cuatro características: procesabilidad por software, fluidez notacional, expresividad deliberadamente limitada, y enfoque de dominio.
+
+\tdl{} cumple estos criterios:
+
+\begin{enumerate}
+    \item \textbf{Sintaxis formal}: Gramática definida por YAML más restricciones de JSON Schema.
+    \item \textbf{Semántica asignada}: Cada campo tiene significado específico interpretable.
+    \item \textbf{Procesabilidad}: Parsers y validadores pueden verificar y ejecutar archivos \tdl{}.
+    \item \textbf{Dominio específico}: Abstracciones para tutoría educativa (eventos instruccionales, secuencias de aprendizaje).
+\end{enumerate}
+
+La completitud de Turing no es requisito para denominar algo ``lenguaje''---HTML, CSS, SQL básico, y expresiones regulares son universalmente llamados lenguajes sin serlo. Los precedentes de PDL (``Prompt Declaration Language'') y POML (``Prompt Orchestration Markup Language'') validan este uso terminológico en el contexto de interacciones con LLM.

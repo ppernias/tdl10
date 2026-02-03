@@ -1,0 +1,274 @@
+% ============================================================================
+% V. COMPONENTES DE TDL
+% ============================================================================
+
+\section{Componentes de TDL}
+
+Esta sección detalla la estructura y sintaxis de cada componente de \tdl{}, con fragmentos ilustrativos de código \yamlformat{}.
+
+\subsection{Especificación YAML}
+
+\tdl{} utiliza \yamlformat{} (YAML Ain't Markup Language) como formato de serialización por varias razones:
+
+\begin{itemize}
+    \item Es legible por humanos sin conocimientos de programación.
+    \item Soporta estructuras jerárquicas de forma natural mediante indentación.
+    \item Permite texto multilínea para prompts extensos usando el operador \texttt{|}. 
+    \item Es ampliamente soportado por herramientas de desarrollo.
+    \item Permite comentarios para documentación inline.
+\end{itemize}
+
+La elección de YAML sobre XML (usado por IMS LD y POML) se basa en la menor cantidad de caracteres sintácticos requeridos: solo se necesita comprender la indentación como mecanismo de estructuración, sin tags de apertura/cierre ni caracteres de escape.
+
+\subsection{El Engine: Estructura y Funciones}
+
+El Engine (versión actual 1.2) define la sintaxis de comandos, el mecanismo de seguimiento de estado, el formato de prompts, y comportamientos globales. Su estructura incluye:
+
+\begin{lstlisting}
+engine:
+  version: "1.2"
+  name: "TDL Engine"
+  state_tracking:
+    method: "explicit_markers"
+    format: "[UNIT:{unit_id}|EVENT:{event_id}]"
+  commands:
+    start:
+      syntax: "/start"
+      action: "begin_first_unit"
+    next:
+      syntax: "/next"
+      action: "advance_to_next_unit"
+    progress:
+      syntax: "/progress"
+      action: "show_current_state"
+\end{lstlisting}
+
+El Engine también define comportamientos de seguridad (nunca revelar el system prompt), manejo de situaciones especiales (preguntas fuera de tema, solicitudes de saltar contenido), y la postura pedagógica por defecto (actuar como coach, verificar comprensión antes de avanzar).
+
+\subsection{Modelo Instruccional: Estructura}
+
+Un modelo instruccional define la metodología de enseñanza como una secuencia de eventos pedagógicos. Cada evento tiene un identificador, nombre, instrucciones detalladas para el LLM, y un trigger que determina cuándo avanzar al siguiente.
+
+\begin{lstlisting}
+model:
+  id: "bloom-8step-interactive"
+  name: "Bloom 8-Step Interactive"
+  version: "1.0"
+  philosophy: "Never advance without verification"
+  
+  events:
+    - id: "E1_ACTIVATE"
+      name: "Activate Prior Knowledge"
+      instructions: |
+        Pregunta que sabe el estudiante 
+        sobre el tema. Identifica 
+        conocimiento correcto, 
+        misconceptions y lagunas antes 
+        de continuar.
+      transition_trigger:
+        condition: "student_response_received"
+        next_event: "E2_OBJECTIVES"
+    
+    - id: "E2_OBJECTIVES"
+      name: "Present Objectives"
+      instructions: |
+        Presenta los objetivos de 
+        aprendizaje de forma clara.
+        Explica que podra hacer el 
+        estudiante al finalizar.
+      transition_trigger:
+        condition: "student_response_received"
+        next_event: "E3_EXPLAIN"
+\end{lstlisting}
+
+Los \textbf{transition triggers} definen cuándo pasar al siguiente evento, basándose en:
+
+\begin{itemize}
+    \item \texttt{student\_response\_received}: Espera cualquier respuesta del estudiante.
+    \item \texttt{comprehension\_verified}: Espera verificación de comprensión.
+    \item \texttt{explicit\_command}: Espera comando explícito (/next).
+    \item \texttt{auto}: Continúa automáticamente sin esperar input.
+\end{itemize}
+
+\subsection{Secuencia de Aprendizaje: Estructura}
+
+La secuencia de aprendizaje es el archivo que el docente crea para su curso específico. Hereda de un modelo instruccional mediante \texttt{extends} y define el perfil del tutor, comportamientos, y unidades de aprendizaje.
+
+\begin{lstlisting}
+sequence:
+  id: "ia-generativa-fundamentals"
+  name: "Fundamentos de IA Generativa"
+  version: "1.0"
+  description: "Tutor de conceptos basicos 
+                de IA Generativa"
+  author: "Pedro Pernias"
+  
+  tutor_profile:
+    name: "Alex"
+    personality: |
+      Tutor entusiasta y paciente de IA.
+      Usa analogias cotidianas para 
+      explicar conceptos tecnicos.
+      El ejemplo de Felix es tu favorito
+      para explicar atencion.
+      Nunca digas que la IA "entiende" 
+      como los humanos.
+  
+  extends: "instructional_model_bloom.yaml"
+  
+  source_content:
+    - file: "content_ia_generativa.md"
+      type: "reference"
+  
+  behaviors:
+    response_length: "medium"
+    language: "es"
+\end{lstlisting}
+
+Las \textbf{unidades de aprendizaje} (\texttt{learning\_units}) estructuran el contenido del curso. Cada unidad es un tema discreto que pasa por todos los eventos del modelo pedagógico:
+
+\begin{lstlisting}
+  learning_units:
+    - id: "LU1"
+      title: "Foundation Models"
+      objectives:
+        - level: "understand"
+          description: "Explicar que es 
+                        un foundation model"
+      prompt: |
+        Puntos clave:
+        - Modelos grandes preentrenados
+        - Sirven como BASE para muchas tareas
+        
+        Analogia: cimientos de un edificio.
+        
+        Ejemplos: GPT, Claude, LLaMA.
+      next: "LU2"
+    
+    - id: "LU4"
+      title: "Mecanismo de Atencion"
+      objectives:
+        - level: "understand"
+          description: "Explicar como funciona
+                        la atencion"
+      prompt: |
+        Usa el ejemplo de Felix:
+        "Felix vio un gato negro y un gato 
+        blanco. Le dio comida a el."
+        
+        Problema: A que se refiere "el"?
+        Solucion: Atencion permite "mirar 
+        atras" y resolver referencias.
+      source_sections:
+        - "Seccion: Arquitectura Transformer"
+      next: "LU5"
+\end{lstlisting}
+
+Nótese que el campo \texttt{prompt} NO es lo que el tutor dice al estudiante, sino una instrucción para el tutor sobre qué enseñar. Debe incluir: puntos clave estructurados, ejemplos concretos, analogías sugeridas, y misconceptions a abordar.
+
+\subsection{Mecanismo de Herencia (extends)}
+
+El campo \texttt{extends} permite que una secuencia de aprendizaje herede la metodología de un modelo instruccional. Cuando el Engine procesa una secuencia con \texttt{extends}:
+
+\begin{enumerate}
+    \item Localiza el archivo del modelo instruccional referenciado.
+    \item Carga la secuencia de eventos del modelo (E1, E2, ..., En).
+    \item Para cada unidad de aprendizaje, ejecuta todos los eventos en orden.
+    \item Usa las instrucciones del modelo combinadas con el prompt de la unidad.
+    \item Gestiona las transiciones según los triggers definidos.
+\end{enumerate}
+
+Este mecanismo permite que el mismo modelo Bloom 8-Step Interactive se aplique a cursos completamente diferentes: el modelo aporta el \textbf{cómo} (activar conocimiento previo, explicar, verificar, practicar) y la secuencia aporta el \textbf{qué} (Foundation Models, Transformers, Atención...).
+
+\subsection{Contenido Fuente: Estructura}
+
+El contenido fuente es un archivo separado (típicamente Markdown) que contiene el material de referencia. Se recomienda usar cuando:
+
+\begin{itemize}
+    \item El contenido es extenso y no cabe cómodamente en prompts.
+    \item El material se actualiza frecuentemente (ej., normativa legal).
+    \item El experto en contenido y el diseñador instruccional son personas diferentes.
+    \item Se desea separar claramente el ``qué'' del ``cómo''.
+\end{itemize}
+
+El formato recomendado usa Markdown con secciones delimitadas por encabezados:
+
+\begin{lstlisting}
+## Seccion: Foundation Models
+
+Los Foundation Models son modelos de gran 
+escala preentrenados con enormes cantidades 
+de datos. Sirven como base para multiples 
+tareas especificas...
+
+## Seccion: Arquitectura Transformer
+
+El Transformer revoluciono el procesamiento 
+del lenguaje natural al introducir el 
+mecanismo de atencion...
+\end{lstlisting}
+
+La secuencia referencia secciones específicas mediante el campo \texttt{source\_sections}:
+
+\begin{lstlisting}
+learning_units:
+  - id: "LU2"
+    title: "Arquitectura Transformer"
+    source_sections:
+      - "Seccion: Arquitectura Transformer"
+    prompt: |
+      Explica la arquitectura Transformer.
+      Enfatiza que reemplazo a las RNNs.
+\end{lstlisting}
+
+El Engine localiza la sección relevante y la incorpora al contexto cuando el prompt lo requiere. Esto permite actualizar el contenido sin modificar la estructura de la secuencia.
+
+\subsection{JSON Schemas para Validación}
+
+Para garantizar la correctitud de los archivos \tdl{}, hemos desarrollado esquemas JSON Schema que definen la estructura válida de cada tipo de archivo. Estos esquemas permiten validación automática antes del despliegue.
+
+El esquema para modelos instruccionales verifica:
+
+\begin{itemize}
+    \item Presencia de campos obligatorios (\texttt{model.id}, \texttt{model.events}).
+    \item Formato correcto del identificador (minúsculas, guiones).
+    \item Al menos dos eventos en la secuencia.
+    \item Cada evento tiene \texttt{id}, \texttt{instructions}, y \texttt{transition\_trigger}.
+\end{itemize}
+
+El esquema para secuencias de aprendizaje verifica adicionalmente:
+
+\begin{itemize}
+    \item Presencia de \texttt{extends} referenciando un modelo válido.
+    \item Estructura correcta de \texttt{tutor\_profile} con \texttt{name} y \texttt{personality}.
+    \item Al menos una unidad de aprendizaje definida con \texttt{id}, \texttt{title}, y \texttt{prompt}.
+    \item Consistencia en referencias \texttt{next} entre unidades.
+\end{itemize}
+
+\subsection{Herramienta de Validación}
+
+Hemos desarrollado un validador en Python que utiliza los esquemas JSON Schema para verificar archivos \tdl{}:
+
+\begin{lstlisting}
+pip install tdl-validator
+tdl-validate learning_sequence.yaml \
+    --model modelo.yaml
+\end{lstlisting}
+
+El validador detecta errores comunes como campos faltantes, tipos incorrectos, indentación incorrecta, o referencias a modelos inexistentes, proporcionando mensajes descriptivos que facilitan la corrección.
+
+\subsection{Patrones de Diseño Comunes}
+
+El manual de \tdl{} identifica cinco patrones de diseño frecuentes:
+
+\begin{enumerate}
+    \item \textbf{Conceptos Técnicos}: Modelo Bloom 8-Step, verificación frecuente, analogías cotidianas, unidades pequeñas y focalizadas.
+    
+    \item \textbf{Glosario}: Modelo simplificado (Identify, Explain, Connect), sin secuencia lineal, respuestas cortas, conexiones entre términos.
+    
+    \item \textbf{Práctica con Ejercicios}: Generación dinámica de problemas, retroalimentación específica por tipo de error, dificultad progresiva.
+    
+    \item \textbf{Casos Prácticos}: Escenarios contextualizados, toma de decisiones guiada, múltiples caminos posibles.
+    
+    \item \textbf{Preparación de Exámenes}: Preguntas tipo examen real, explicación detallada de respuestas, identificación de áreas débiles.
+\end{enumerate}

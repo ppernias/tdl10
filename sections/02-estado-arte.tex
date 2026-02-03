@@ -1,0 +1,80 @@
+% ============================================================================
+% II. ESTADO DEL ARTE EN ITS
+% ============================================================================
+
+\section{Sistemas de Tutoría Inteligente: Estado del Arte}
+
+Esta sección revisa dos décadas de investigación en ITS (2005-2025), centrándose en la arquitectura, evidencia de efectividad, herramientas de autoría, y la transición hacia LLM.
+
+\subsection{Arquitectura Clásica de ITS}
+
+La arquitectura canónica de un ITS, establecida por Nwana \cite{nwana1990} y refinada en trabajos posteriores \cite{woolf2009}, comprende cuatro componentes interrelacionados:
+
+\begin{enumerate}
+    \item \textbf{Modelo de Dominio}: Representa el conocimiento experto que el sistema enseña.
+    
+    \item \textbf{Modelo del Estudiante}: Mantiene una representación del estado cognitivo del aprendiz: qué sabe, qué misconceptions tiene, y cómo progresa.
+    
+    \item \textbf{Modelo Pedagógico}: Contiene las estrategias instruccionales y decide qué acción tomar dado el estado del estudiante y el dominio.
+    
+    \item \textbf{Interfaz de Usuario}: Gestiona la comunicación entre el sistema y el estudiante.
+\end{enumerate}
+
+El \textit{student model} merece atención especial porque es el componente que diferencia un ITS de instrucción computarizada convencional. Técnicas como \textit{model tracing} \cite{anderson1995} comparan las acciones del estudiante contra un modelo cognitivo, identificando errores en tiempo real. \textit{Knowledge tracing} \cite{corbett1994} estima probabilísticamente el dominio de habilidades específicas.
+
+\subsection{Evidencia de Efectividad}
+
+La efectividad de los ITS está bien documentada mediante múltiples meta-análisis:
+
+\textbf{VanLehn (2011)} \cite{vanlehn2011} comparó 54 estudios y encontró: tutoría humana $d = 0.79$; ITS \textit{step-based} $d = 0.76$; ITS \textit{substep-based} $d = 0.40$; CAI \textit{answer-based} $d = 0.31$. La comparación directa ITS vs. tutoría humana arrojó $g = -0.11$ (no significativo).
+
+\textbf{Kulik y Fletcher (2016)} \cite{kulik2016} analizaron 50 evaluaciones controladas: tamaño de efecto mediano $d = 0.66$; 92\% de evaluaciones mostraron superioridad sobre instrucción convencional.
+
+\textbf{Ma et al. (2014)} \cite{ma2014} identificaron el \textbf{diagnóstico cognitivo en tiempo real} y la \textbf{remediación adaptativa} como los elementos más críticos para la efectividad de los ITS.
+
+Un hallazgo crucial de VanLehn \cite{vanlehn2011} fue que los tutores \textit{step-based} (que verifican comprensión en cada paso) son significativamente más efectivos que los \textit{answer-based} (que solo evalúan respuestas finales). Este resultado fundamenta el diseño del modelo Bloom 8-Step Interactive de \tdl{}.
+
+\subsection{Herramientas de Autoría}
+
+El desarrollo de ITS históricamente ha requerido entre 200-300 horas de desarrollo por hora de instrucción \cite{murray1999}. Las herramientas de autoría buscan reducir esta barrera.
+
+\textbf{CTAT} \cite{aleven2009} introdujo los \textit{Example-Tracing Tutors}, que pueden construirse ``enteramente sin programación'' mediante programación por demostración. Los autores demuestran comportamientos deseados, y el sistema generaliza las reglas.
+
+\textbf{GIFT} \cite{sottilare2012} implementa una arquitectura modular con separación explícita entre módulo pedagógico y módulo de dominio. Esta separación permite reutilizar estrategias instruccionales entre diferentes dominios de conocimiento.
+
+\textbf{AutoTutor} \cite{graesser2004} pioneró el uso de diálogo en lenguaje natural para tutoría, con tamaños de efecto reportados de 0.4 a 1.5. Su arquitectura incluye un Curriculum Script que organiza las preguntas y un Dialog Advancer que gestiona la conversación.
+
+Sin embargo, incluso estas herramientas requieren conocimientos técnicos significativos y ecosistemas de software específicos que limitan su adopción fuera de entornos de investigación.
+
+\subsection{La Transición a LLMs}
+
+La investigación documenta problemas sistemáticos con LLM como tutores. Tack y Piech \cite{tack2022} encontraron que ``los LLM actuales no son buenos tutores por defecto''. Borchers et al. \cite{borchers2025} confirmaron que GPT-4 ``proporciona retroalimentación excesivamente directa''.
+
+Sin embargo, evidencia temprana es prometedora: Pardos y Bhandari \cite{pardos2024} encontraron que hints generados por ChatGPT produjeron 17\% de ganancia de aprendizaje vs. 11.62\% para hints de tutores humanos---sin diferencia significativa. Kestin et al. \cite{kestin2025} reportaron que estudiantes con tutor de IA superaron a aquellos con instrucción activa presencial.
+
+\subsection{Lecciones de IMS Learning Design}
+
+Educational Modeling Language (EML), desarrollado por Rob Koper en Open University of the Netherlands, fue la base de IMS Learning Design (IMS LD v1.0, febrero 2003) \cite{koper2005}. Van Es y Koper demostraron que 16 planes de lección de tradiciones pedagógicas diversas podían codificarse exitosamente en IMS LD.
+
+Sin embargo, Derntl et al. \cite{derntl2012} reportaron: ``IMS LD ha estado disponible desde 2003, y sin embargo no ha sido ampliamente adoptado''. Las causas identificadas fueron:
+
+\begin{itemize}
+    \item \textbf{Ecosistema inmaduro}: Griffiths et al. \cite{griffiths2005} encontraron que ``el round-tripping entre herramientas no es posible''.
+    \item \textbf{Alto esfuerzo}: Berggren et al. \cite{berggren2005} documentaron relación 3:1 entre preparación y uso.
+    \item \textbf{Desajuste terminológico}: Neumann y Oberhuemer \cite{neumann2008} identificaron que ``los conceptos del lenguaje difieren de los que un maestro usa para planificar''.
+\end{itemize}
+
+Crucialmente, Derntl et al. \cite{derntl2012} encontraron que tras 45 minutos de introducción, 78\% de profesores logró conformidad con soluciones expertas. ``La estructura conceptual de IMS LD \textbf{no} impide su uso para autoría''. Las barreras fueron de ecosistema, no conceptuales.
+
+\subsection{Lecciones para TDL}
+
+La historia de IMS LD sugiere cuatro lecciones para el diseño de \tdl{}:
+
+\begin{enumerate}
+    \item La simplicidad conceptual no garantiza adopción---el ecosistema importa.
+    \item El esfuerzo debe ser proporcional al beneficio percibido.
+    \item La terminología debe alinearse con el lenguaje que usan los docentes.
+    \item La portabilidad reduce dependencia del ecosistema específico.
+\end{enumerate}
+
+\tdl{} intenta mitigar estos riesgos: no requiere herramientas especiales (cualquier editor de texto sirve), usa terminología familiar (eventos, unidades, prompts), y funciona en múltiples plataformas LLM comerciales. Sin embargo, hereda el riesgo fundamental de que el esfuerzo de formalización no se perciba proporcional al beneficio.

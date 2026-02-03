@@ -1,0 +1,125 @@
+% ============================================================================
+% VII. ESPECIFICACIÓN TÉCNICA Y PORTABILIDAD
+% ============================================================================
+
+\section{Especificación Técnica y Portabilidad}
+
+Una ventaja clave de \tdl{} es su portabilidad: los mismos archivos funcionan en múltiples plataformas LLM sin modificación. Esta sección describe cómo se logra esta portabilidad.
+
+\subsection{Portabilidad entre Plataformas}
+
+\tdl{} ha sido probado en cuatro plataformas principales. La Tabla~\ref{tab:plataformas} muestra la configuración para cada una.
+
+\begin{table}[htbp]
+\caption{Configuración de TDL por Plataforma}
+\label{tab:plataformas}
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Plataforma} & \textbf{Engine} & \textbf{Archivos TDL} \\
+\midrule
+ChatGPT GPTs & Instructions & Knowledge \\
+Claude Projects & Project Instructions & Project Knowledge \\
+Gemini Gems & Instructions & Attached Files \\
+OpenWebUI & System Prompt & Knowledge + RAG \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Proceso de Despliegue}
+
+El proceso de despliegue es consistente entre plataformas:
+
+\begin{enumerate}
+    \item \textbf{Copiar el Engine}: El contenido del Engine se copia en el campo de instrucciones del sistema (Instructions, System Prompt, o equivalente).
+    
+    \item \textbf{Subir archivos TDL}: Los archivos \yamlformat{} (modelo instruccional y secuencia de aprendizaje) se suben al área de conocimiento de la plataforma.
+    
+    \item \textbf{Subir contenido fuente} (opcional): Si se usa contenido fuente separado, se sube también al área de conocimiento.
+    
+    \item \textbf{Configurar conversation starters}: Se configuran los mensajes iniciales sugeridos con ``Hola'' y ``/start''.
+\end{enumerate}
+
+\subsection{Configuración por Plataforma}
+
+\subsubsection{ChatGPT GPTs}
+
+En ChatGPT, los GPTs personalizados tienen un campo ``Instructions'' que acepta hasta 8,000 caracteres. El Engine se copia aquí. Los archivos \tdl{} y el contenido fuente se suben a ``Knowledge'', donde ChatGPT puede acceder a ellos mediante retrieval.
+
+\begin{lstlisting}
+# Configuracion ChatGPT GPT
+Instructions: [Contenido del Engine]
+Knowledge: 
+  - instructional_model_bloom8.yaml
+  - learning_sequence_curso.yaml
+  - content_curso.md
+Conversation Starters:
+  - "Hola"
+  - "/start"
+\end{lstlisting}
+
+\subsubsection{Claude Projects}
+
+Claude ofrece ``Projects'' con instrucciones de proyecto y archivos de conocimiento. El Engine se copia en ``Project Instructions''. Los archivos \tdl{} se añaden como ``Project Knowledge''.
+
+\subsubsection{Gemini Gems}
+
+Google Gemini tiene ``Gems'' con un campo de instrucciones y archivos adjuntos. La configuración es análoga a las anteriores plataformas.
+
+\subsubsection{OpenWebUI}
+
+OpenWebUI es una interfaz open-source que puede conectarse a diferentes backends LLM. El Engine se configura como System Prompt, y los archivos \tdl{} se integran mediante el sistema RAG (Retrieval Augmented Generation) de la plataforma.
+
+\subsection{Ventajas de la Portabilidad}
+
+La portabilidad de \tdl{} ofrece varias ventajas:
+
+\begin{itemize}
+    \item \textbf{No vendor lock-in}: Las instituciones pueden migrar entre plataformas sin reescribir sus especificaciones.
+    
+    \item \textbf{Comparación de modelos}: El mismo tutor puede desplegarse en GPT-4, Claude y Gemini para comparar rendimiento.
+    
+    \item \textbf{Redundancia}: Si una plataforma tiene problemas de disponibilidad, el tutor puede desplegarse temporalmente en otra.
+    
+    \item \textbf{Elección por caso de uso}: Diferentes cursos pueden usar diferentes plataformas según sus necesidades (costo, capacidades específicas, políticas institucionales).
+\end{itemize}
+
+\subsection{Limitaciones de Portabilidad}
+
+A pesar de la portabilidad general, existen algunas diferencias entre plataformas:
+
+\begin{itemize}
+    \item \textbf{Capacidad de seguimiento de instrucciones}: Modelos más avanzados (GPT-4, Claude 3) siguen las instrucciones del Engine más fielmente que modelos más pequeños.
+    
+    \item \textbf{Límites de contexto}: Algunas plataformas tienen límites más restrictivos en el tamaño del system prompt o el contenido de knowledge.
+    
+    \item \textbf{Retrieval quality}: La calidad de recuperación de información de los archivos de knowledge varía entre plataformas.
+    
+    \item \textbf{Funcionalidades específicas}: Algunas plataformas ofrecen capacidades adicionales (code interpreter, browsing) que \tdl{} no aprovecha actualmente.
+\end{itemize}
+
+\subsection{Recomendaciones de Despliegue}
+
+Basándonos en nuestra experiencia, ofrecemos las siguientes recomendaciones:
+
+\begin{enumerate}
+    \item \textbf{Probar en múltiples plataformas}: Antes de despliegue en producción, verificar comportamiento en al menos dos plataformas.
+    
+    \item \textbf{Usar modelos de última generación}: Para tutorías complejas, usar GPT-4, Claude 3 Opus/Sonnet, o equivalentes.
+    
+    \item \textbf{Validar antes de subir}: Ejecutar el validador \tdl{} en todos los archivos antes del despliegue.
+    
+    \item \textbf{Documentar configuración}: Mantener un registro de qué versión de qué archivos están desplegados en cada plataforma.
+\end{enumerate}
+
+\subsection{Herramientas de Soporte}
+
+El ecosistema \tdl{} incluye herramientas de soporte:
+
+\begin{itemize}
+    \item \textbf{Validador Python}: Verifica sintaxis y estructura de archivos \tdl{}.
+    \item \textbf{Plantillas de referencia}: Modelos instruccionales y secuencias de ejemplo listos para adaptar.
+    \item \textbf{Documentación}: Guía completa de la especificación y mejores prácticas.
+\end{itemize}
+
+Trabajo futuro incluye el desarrollo de un \textbf{TDL Maker}: una herramienta web visual que permita diseñar secuencias de aprendizaje mediante drag-and-drop, generando el \yamlformat{} automáticamente. Esta herramienta reduciría aún más la barrera de entrada para docentes sin familiaridad con formatos de texto estructurado.

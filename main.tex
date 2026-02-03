@@ -1,0 +1,128 @@
+\documentclass[conference]{IEEEtran}
+
+% Paquetes basicos - ORDEN IMPORTANTE
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{listings}
+
+% Definicion del lenguaje YAML para listings
+\lstdefinelanguage{yaml}{
+  morekeywords={true,false,null,y,n},
+  sensitive=false,
+  morecomment=[l]{\#\#},
+  morestring=[b]",
+  morestring=[b]',
+  alsoletter={-},
+  tabsize=2
+}
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+
+% Colores para codigo
+\definecolor{codegreen}{RGB}{34, 139, 34}
+\definecolor{codegray}{RGB}{128, 128, 128}
+\definecolor{codeblue}{RGB}{0, 0, 180}
+\definecolor{backcolour}{RGB}{248, 248, 248}
+
+% Configuracion de listings para YAML
+\lstset{
+    basicstyle=\footnotesize\ttfamily,
+    backgroundcolor=\color{backcolour},
+    frame=single,
+    framerule=0.5pt,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=2,
+    showstringspaces=false,
+    numbers=none,
+    xleftmargin=2pt,
+    xrightmargin=2pt,
+    aboveskip=6pt,
+    belowskip=6pt,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegray}\ttfamily,
+    stringstyle=\color{codegreen}
+}
+
+% Comandos personalizados
+\newcommand{\tdl}{\textsc{tdl}}
+\newcommand{\adl}{\textsc{adl}}
+\newcommand{\yamlformat}{\textsc{yaml}}
+
+\begin{document}
+
+\title{Del ADL al TDL: Una Arquitectura Desacoplada para Tutores Basados en LLM Fundamentada en Principios de Diseño Instruccional}
+
+\author{
+    \IEEEauthorblockN{Pedro A. Pernías Peco}
+    \IEEEauthorblockA{
+        Departamento de Lenguajes y Sistemas Informáticos\\
+        Universidad de Alicante\\
+        Alicante, España\\
+        p.pernias@ua.es
+    }
+    \and
+    \IEEEauthorblockN{M. Pilar Escobar Esteban}
+    \IEEEauthorblockA{
+        Departamento de Lenguajes y Sistemas Informáticos\\
+        Universidad de Alicante\\
+        Alicante, España\\
+        pilar.escobar@ua.es
+    }
+}
+
+\maketitle
+
+% ============================================================================
+% ABSTRACT
+% ============================================================================
+
+\begin{abstract}
+Los Modelos de Lenguaje de Gran Escala (LLM) ofrecen una oportunidad sin precedentes para escalar la tutoría personalizada, pero la investigación documenta que carecen de alineamiento pedagógico: proporcionan respuestas directas en lugar de guiar el aprendizaje. La separación entre metodología instruccional y contenido es un principio establecido en diseño instruccional desde la Component Display Theory (Merrill, 1983), implementado en sistemas como IMS Learning Design (2003) y frameworks como GIFT. Trabajos previos como el Assistant Description Language (\adl{}) permiten a los docentes codificar asistentes de IA, pero mezclan responsabilidades en una única especificación monolítica. Este artículo presenta el Tutor Description Language (\tdl{}), una evolución de \adl{} que implementa la separación metodología-contenido mediante una arquitectura de cuatro capas desacopladas: (1) un motor de interpretación universal, (2) modelos instruccionales reutilizables alineados con teorías de Gagné y Bloom, (3) secuencias de aprendizaje específicas, y (4) contenido fuente independiente. A diferencia de sus predecesores, \tdl{} prioriza la simplicidad sintáctica (YAML) y la portabilidad entre plataformas (ChatGPT, Claude, Gemini) sobre la expresividad formal. Presentamos la especificación completa, dos modelos instruccionales de referencia, herramientas de validación, y una agenda de investigación para validar empíricamente si \tdl{} mejora los resultados de aprendizaje y reduce la carga docente.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Tutor Description Language, Assistant Description Language, Sistemas de Tutoría Inteligente, Lenguajes de Dominio Específico, Diseño Instruccional, Modelos de Lenguaje, IA en Educación
+\end{IEEEkeywords}
+
+% ============================================================================
+% CUERPO DEL DOCUMENTO
+% ============================================================================
+
+\input{sections/01-introduccion}
+\input{sections/02-estado-arte}
+\input{sections/03-adl-tdl}
+\input{sections/04-arquitectura}
+\input{sections/05-componentes}
+\input{sections/06-modelos}
+\input{sections/07-portabilidad}
+\input{sections/08-discusion}
+\input{sections/09-conclusiones}
+
+% ============================================================================
+% AGRADECIMIENTOS
+% ============================================================================
+
+\section*{Agradecimientos}
+Este trabajo ha sido parcialmente financiado por el proyecto AI4ProSa.
+
+% ============================================================================
+% BIBLIOGRAFÍA
+% ============================================================================
+
+\input{sections/referencias}
+
+\end{document}
