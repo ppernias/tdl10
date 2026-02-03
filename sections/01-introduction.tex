@@ -1,0 +1,87 @@
+% ============================================================================
+% I. INTRODUCTION
+% ============================================================================
+\section{Introduction}
+
+\subsection{The Challenge of Scaling Personalized Tutoring}
+
+Benjamin Bloom's celebrated ``2 sigma problem'' \cite{bloom1984} established that students receiving individualized tutoring with mastery learning significantly outperform those in conventional group instruction. However, subsequent reviews have nuanced this claim. VanLehn \cite{vanlehn2011}, in a meta-analysis of 54 studies, found that the actual effect size of human tutoring is $d = 0.79$, not the two standard deviations originally proposed. Kulik and Fletcher \cite{kulik2016}, analyzing 50 controlled evaluations of Intelligent Tutoring Systems (ITS), reported a median effect size of $d = 0.66$. Ma et al. \cite{ma2014}, with 107 effect sizes from 73 studies, found that ITS do not differ significantly from individualized human tutoring ($g = -0.11$, not significant).
+
+These findings carry an important implication: well-designed ITS have already demonstrated statistical equivalence to human tutors. The contemporary challenge is not to achieve an idealized ``2 sigma'' goal, but to make this proven effectiveness accessible at scale, reducing the cost and complexity of development that have historically limited ITS adoption.
+
+\subsection{LLMs as Tutors: Documented Promises and Limitations}
+
+Large Language Models (LLMs) such as GPT-4, Claude, and Gemini have generated growing interest in their application as educational tutors \cite{lee2024impact}. They offer apparent advantages: natural language conversation, continuous availability, and deployment without the technical infrastructure required by traditional ITS. Kestin et al. \cite{kestin2025} reported promising results: in a controlled experiment, students using an AI tutor significantly outperformed those receiving in-person active instruction.
+
+However, recent research documents a fundamental limitation: LLMs are not intrinsically aligned with pedagogical objectives. Tack and Piech \cite{tack2022} demonstrated that current LLMs are not ``good tutors by default'': their objective of maximizing helpfulness conflicts with effective tutorial strategies that involve productively challenging the student. Macina et al. \cite{macina2023} confirmed that language models, without modifications, provide direct answers instead of guiding through questions. Borchers et al. \cite{borchers2025} found that GPT-4 ``provides overly direct feedback that diverges from effective tutoring'' and shows ``minimal adaptivity'' to student errors.
+
+This limitation has architectural roots. Traditional ITS incorporate a \textit{student model} that tracks learner knowledge, skills, and misconceptions, enabling fine-grained adaptation \cite{nwana1990}. LLMs lack this component: they do not maintain a persistent student model across sessions and have limited capacity to diagnose the learner's cognitive state in real time \cite{scarlatos2025}.
+
+\subsection{The Need for Structured Specification}
+
+The gap between LLM capabilities and pedagogical requirements has motivated structured approaches to assistant specification. Early deployments relied on unstructured prompts or ad-hoc templates---flexible for rapid prototyping but offering limited reproducibility, weak role consistency guarantees, and poor support for reuse and maintenance.
+
+Recent work has explored declarative control of language model behavior. IBM Research developed the Prompt Declaration Language (PDL) \cite{ibm2024pdl}, a YAML-based DSL with formal grammar and type system. Microsoft Research proposed POML (Prompt Orchestration Markup Language) \cite{zhang2025poml}, an HTML-inspired markup language with semantic components. However, neither PDL nor POML incorporates instructional design concepts: they lack notions such as learning events, pedagogical sequences, or explicit separation between methodology and educational content.
+
+The idea of separating instructional methodology from content is not new. It has roots in Merrill's Component Display Theory \cite{merrill1983} and was formalized in the Instructional Transaction Theory \cite{merrill1991} through \textit{transaction shells}: ``instructional algorithms that can be used with different content topics as long as these topics are of a similar type of knowledge.'' IMS Learning Design \cite{koper2005} was the most ambitious attempt to standardize this separation, but despite two decades since publication, it did not achieve widespread adoption---not due to conceptual complexity, but to ecosystem immaturity and tooling barriers \cite{derntl2012}.
+
+\subsection{From ADL 1.0 to ADL 2.0: The Role of TDL}
+
+This work is situated within a research line on LLM assistant specification. Our prior work with ADL 1.0 (Assistant Description Language) \cite{pernias2025adl} established the foundations for declaratively describing assistants. ADL 1.0 demonstrated the feasibility of separating pedagogical intent from execution mechanisms in educational settings.
+
+However, applying ADL 1.0 in educational contexts revealed structural limitations: (1) \textbf{monolithic architecture} that hindered reuse; (2) \textbf{implicit pedagogical method} dispersed across commands and decorators; (3) \textbf{embedded content} coupled to methodology; (4) \textbf{implicit boundaries} making behavior unpredictable; and (5) \textbf{lack of clear inheritance mechanisms} requiring error-prone copy-paste.
+
+TDL (Tutor Description Language) emerged as a response to these limitations, proposing a four-layer architecture with explicit decoupling between instructional methodology and content. These design proposals subsequently informed the development of ADL 2.0 \cite{pernias2025adl2}, which generalized the declarative inheritance mechanisms and elevated boundaries to a mandatory core element.
+
+This paper demonstrates that the pedagogical decoupling pattern introduced by TDL can be expressed as an ADL 2.0 profile without loss of expressiveness, validating its applicability to other specialized assistant domains.
+
+\subsection{Positioning and Contributions}
+
+TDL positions itself at the intersection of three lines of work:
+
+\begin{enumerate}
+    \item \textbf{ITS authoring tools}: Like CTAT \cite{aleven2009} and GIFT \cite{sottilare2012}, TDL seeks to reduce the technical barrier for creating tutors. Unlike these, TDL requires no dedicated infrastructure: it deploys on existing commercial LLM platforms.
+
+    \item \textbf{Instructional design standards}: Like IMS Learning Design \cite{koper2005}, TDL formalizes the separation between methodology and content. Unlike IMS LD, TDL prioritizes syntactic simplicity (YAML vs. XML) and avoids formal completeness in favor of usability.
+
+    \item \textbf{Prompt languages}: Like PDL \cite{ibm2024pdl} and POML \cite{zhang2025poml}, TDL is a DSL for structuring LLM interactions. Unlike these, TDL incorporates instructional design concepts and targets educators, not developers.
+\end{enumerate}
+
+The main contributions of this work are:
+
+\begin{itemize}
+    \item A \textbf{four-layer architecture} that separates \textit{how to teach} from \textit{what to teach}, enabling reuse of instructional models.
+
+    \item The concept of \textbf{instructional model as an explicit component}, reusable across courses and aligned with Gagn\'{e}'s and Bloom's instructional design theories.
+
+    \item A \textbf{complete formal specification} of TDL as a DSL, with YAML syntax and JSON Schema validation.
+
+    \item Two \textbf{reference instructional models}: an interactive model based on Bloom's taxonomy, and an expository model based on Gagn\'{e}'s nine events.
+
+    \item \textbf{Portability demonstration} across commercial LLM platforms (ChatGPT, Claude, Gemini, OpenWebUI).
+
+    \item \textbf{Alignment with ADL 2.0}: demonstration that the limitations identified in ADL 1.0 informed ADL 2.0 design, and that TDL can be expressed as an ADL 2.0 profile without loss of expressiveness.
+
+    \item A \textbf{research agenda} with specific hypotheses for validating TDL effectiveness.
+\end{itemize}
+
+It is important to state what TDL is \textit{not} and does \textit{not} claim:
+
+\begin{itemize}
+    \item TDL \textbf{is not a complete ITS}: it lacks a \textit{student model} for individualized cognitive diagnosis.
+    \item TDL \textbf{does not guarantee pedagogical effectiveness}: it structures interaction but does not ensure learning outcomes.
+    \item TDL \textbf{has not been empirically validated}: this paper presents the specification and proposes future studies.
+    \item TDL \textbf{does not solve LLM limitations}: adaptivity still depends on the underlying model.
+\end{itemize}
+
+\subsection{Article Structure}
+
+The remainder of this article is organized as follows: Section~II reviews the state of the art in ITS and authoring tools; Section~III analyzes the evolution from ADL 1.0 to TDL and the identified limitations; Section~IV presents the four-layer architecture; Section~V details the TDL components and specification; Section~VI elaborates on instructional models; Section~VII describes portability across platforms; Section~VIII demonstrates alignment with ADL 2.0; Section~IX discusses implications and limitations; and Section~X concludes with future research directions.
+
+\subsection{Terminological Justification: Why ``Language''?}
+
+The use of the term ``Language'' requires justification. According to van Deursen, Klint, and Visser \cite{vandeursen2000}, a Domain-Specific Language (DSL) is ``a programming language or executable specification language that offers, through appropriate notations and abstractions, expressive power focused on a particular domain.'' Fowler \cite{fowler2010} identifies four characteristics: software processability, notational fluency, deliberately limited expressiveness, and domain focus.
+
+TDL meets these criteria: (1) formal syntax defined by YAML plus JSON Schema constraints; (2) assigned semantics where each field has specific interpretable meaning; (3) processability through parsers and validators; and (4) domain-specific abstractions for educational tutoring (instructional events, learning sequences).
+
+Turing completeness is not a requirement for calling something a ``language''---HTML, CSS, basic SQL, and regular expressions are universally called languages without being Turing-complete. The precedents of PDL (``Prompt Declaration Language'') and POML (``Prompt Orchestration Markup Language'') validate this terminological usage in the context of LLM interactions.

@@ -1,0 +1,191 @@
+% ============================================================================
+% VI. INSTRUCTIONAL MODELS
+% ============================================================================
+\section{Instructional Models in TDL}
+
+The concept of instructional model is central to TDL. This section elaborates on its theoretical foundation and presents the two reference models included in the specification.
+
+\subsection{The Instructional Event Concept}
+
+Instructional events in TDL are inspired by Robert Gagn\'{e}'s theory \cite{gagne1985}, who identified nine events that optimize learning. TDL adapts this framework to the context of conversational tutoring, where each event represents a phase with a specific pedagogical purpose.
+
+Table~\ref{tab:gagne_mapping} shows the correspondence between Gagn\'{e}'s events and typical TDL events.
+
+\begin{table}[htbp]
+\caption{Correspondence Between Gagn\'{e}'s Events and TDL}
+\label{tab:gagne_mapping}
+\centering
+\begin{tabular}{p{3.2cm}p{3.5cm}}
+\toprule
+\textbf{Gagn\'{e}'s Event} & \textbf{TDL Event} \\
+\midrule
+Gain attention & Attention / Activate \\
+Inform objectives & Objectives \\
+Stimulate recall & Recall / Activate \\
+Present content & Explain / Present \\
+Provide guidance & Guidance / Elaborate \\
+Elicit performance & Practice / Elicit \\
+Provide feedback & Verify / Feedback \\
+Assess performance & Assess \\
+Enhance retention & Summary / Transfer \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This correspondence is not rigid: TDL allows flexibility in how events are organized, as long as they maintain pedagogical coherence.
+
+\subsection{Relationship with Transaction Shells}
+
+TDL's instructional models are functionally analogous to Merrill's \textit{transaction shells} \cite{merrill1991}: reusable pedagogical algorithms for different contents. A transaction shell specifies the sequence of interactions without knowing the specific content; TDL's instructional model does exactly the same.
+
+This analogy reinforces that TDL does not introduce new concepts, but implements established principles in a new technological context (LLMs).
+
+\subsection{Reference Model: Bloom 8-Step Interactive}
+
+The Bloom 8-Step Interactive model implements a Socratic approach where the tutor constantly verifies comprehension before advancing. Its central philosophy is: \textbf{``Never advance without verification.''}
+
+This design aligns with VanLehn's evidence \cite{vanlehn2011}: \textit{step-based} tutors ($d = 0.76$) significantly outperform \textit{answer-based} tutors ($d = 0.31$).
+
+Despite the ``8-Step'' name, the model implements 10 events for greater verification granularity:
+
+\begin{table}[htbp]
+\caption{Events of the Bloom 8-Step Interactive Model}
+\label{tab:bloom_events}
+\centering
+\begin{tabular}{clp{2.8cm}}
+\toprule
+\textbf{ID} & \textbf{Event} & \textbf{Purpose} \\
+\midrule
+E1 & ACTIVATE & Activate prior knowledge \\
+E2 & OBJECTIVES & Present objectives \\
+E3 & EXPLAIN & Present content \\
+E4 & VERIFY\_EXPLAIN & Verify initial comprehension \\
+E5 & ELABORATE & Deepen if correct \\
+E6 & VERIFY\_ELABORATE & Verify deepening \\
+E7 & PRACTICE & Guided practice \\
+E8 & VERIFY\_PRACTICE & Verify practice \\
+E9 & SUMMARY & Summary and connections \\
+E10 & CLOSE & Closure and transition \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Model Characteristics}
+
+\begin{itemize}
+    \item \textbf{Continuous verification}: Each explanation (E3, E5) is followed by verification (E4, E6).
+    \item \textbf{Immediate feedback}: The tutor evaluates each response before continuing.
+    \item \textbf{Cognitive progression}: From recall to comprehension, from comprehension to application, from application to synthesis (aligned with Bloom's taxonomy \cite{anderson2001}).
+    \item \textbf{Misconception detection}: E1 identifies incorrect knowledge before teaching.
+\end{itemize}
+
+\subsubsection{Ideal Use Cases}
+
+This model is ideal for:
+
+\begin{itemize}
+    \item Complex technical concepts where each concept is a prerequisite for the next.
+    \item Domains where conceptual errors are costly (medicine, engineering, law).
+    \item Students who need active guidance and frequent verification.
+    \item Situations where deep understanding is more important than broad coverage.
+\end{itemize}
+
+\subsection{Reference Model: Expository}
+
+The Expository model implements a structured lecture approach, based directly on Gagn\'{e}'s nine events. The tutor presents content in an organized manner before requesting active participation.
+
+Its philosophy is: \textbf{``Structured transmission''}---organized presentation with verifications concentrated at the end.
+
+\begin{table}[htbp]
+\caption{Events of the Expository Model (based on Gagn\'{e})}
+\label{tab:expository_events}
+\centering
+\begin{tabular}{clp{3cm}}
+\toprule
+\textbf{ID} & \textbf{Event} & \textbf{Purpose} \\
+\midrule
+E1 & ATTENTION & Capture initial attention \\
+E2 & OBJECTIVES & Inform objectives \\
+E3 & RECALL & Stimulate prior recall \\
+E4 & PRESENT & Present content \\
+E5 & GUIDANCE & Provide guidance \\
+E6 & ELICIT & Elicit performance \\
+E7 & FEEDBACK & Provide feedback \\
+E8 & ASSESS & Assess performance \\
+E9 & TRANSFER & Enhance retention \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Differences from the Interactive Model}
+
+The key difference is that the tutor can give longer expositions (5--8 paragraphs) before pausing for interaction. The student has a more receptive role initially, with active participation concentrated in E6--E8.
+
+\subsubsection{Ideal Use Cases}
+
+This model is ideal for:
+
+\begin{itemize}
+    \item Normative, legal, or regulatory content where precision is critical.
+    \item First exposure to a completely new topic.
+    \item Rapid coverage of introductory or contextual material.
+    \item Students who prefer receiving complete information before interacting.
+\end{itemize}
+
+\subsection{Creating Custom Models}
+
+TDL does not limit teachers to reference models. An instructional designer can create custom models following this process:
+
+\begin{enumerate}
+    \item Identify the guiding pedagogical philosophy.
+    \item Draw the event sequence on paper.
+    \item Define what happens in each phase and its purpose.
+    \item Define when to advance to the next (triggers).
+    \item Write detailed instructions for each event.
+\end{enumerate}
+
+For example, the 5E model (Engage, Explore, Explain, Elaborate, Evaluate) for scientific inquiry:
+
+\begin{lstlisting}
+model:
+  id: "5e-inquiry"
+  name: "5E Inquiry Model"
+  philosophy: "Discovery through guided
+               exploration"
+
+  events:
+    - id: "E1_ENGAGE"
+      name: "Engage"
+      instructions: |
+        Capture attention with a provocative
+        question or intriguing phenomenon.
+        Do NOT reveal the answer yet.
+      transition_trigger:
+        condition: "student_response_received"
+        next_event: "E2_EXPLORE"
+
+    - id: "E2_EXPLORE"
+      name: "Explore"
+      instructions: |
+        Guide the student to discover on
+        their own through guiding questions.
+        Do NOT give direct answers in
+        this phase.
+      transition_trigger:
+        condition: "exploration_complete"
+        next_event: "E3_EXPLAIN"
+\end{lstlisting}
+
+Custom model creation opens the possibility of a \textbf{community repository} where instructional designers share validated methodologies that other teachers can apply directly to their courses.
+
+\subsection{Model Limitations}
+
+It is important to recognize the limitations of instructional models in TDL:
+
+\begin{itemize}
+    \item \textbf{Predefined sequence}: Models define sequences that repeat for each unit. There is no conditional branching based on student performance.
+    \item \textbf{No cognitive diagnosis}: Models do not detect specific misconceptions beyond what the LLM can infer conversationally.
+    \item \textbf{LLM dependence}: Execution quality depends on how faithfully the LLM follows instructions. More capable models (GPT-4, Claude 3) produce better results.
+\end{itemize}
+
+These limitations are deliberate: they keep TDL simple and portable. More advanced functionalities would require infrastructure that contradicts the goal of deployment on existing commercial platforms.

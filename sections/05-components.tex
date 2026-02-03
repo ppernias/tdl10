@@ -1,0 +1,270 @@
+% ============================================================================
+% V. TDL COMPONENTS AND SPECIFICATION
+% ============================================================================
+\section{TDL Components and Specification}
+
+This section details the structure and syntax of each TDL component, with illustrative \yamlformat{} code fragments.
+
+\subsection{YAML Specification}
+
+TDL uses \yamlformat{} (YAML Ain't Markup Language) as its serialization format for several reasons:
+
+\begin{itemize}
+    \item Human-readable without programming knowledge.
+    \item Naturally supports hierarchical structures through indentation.
+    \item Allows multiline text for extensive prompts using the \texttt{|} operator.
+    \item Widely supported by development tools.
+    \item Allows comments for inline documentation.
+\end{itemize}
+
+The choice of YAML over XML (used by IMS LD and POML) is based on fewer syntactic characters required: only indentation needs to be understood as a structuring mechanism, without opening/closing tags or escape characters.
+
+\subsection{The Engine: Structure and Functions}
+
+The Engine (current version 1.2) defines command syntax, state tracking mechanism, prompt format, and global behaviors. Its structure includes:
+
+\begin{lstlisting}
+engine:
+  version: "1.2"
+  name: "TDL Engine"
+  state_tracking:
+    method: "explicit_markers"
+    format: "[UNIT:{unit_id}|EVENT:{event_id}]"
+  commands:
+    start:
+      syntax: "/start"
+      action: "begin_first_unit"
+    next:
+      syntax: "/next"
+      action: "advance_to_next_unit"
+    progress:
+      syntax: "/progress"
+      action: "show_current_state"
+\end{lstlisting}
+
+The Engine also defines security behaviors (never reveal the system prompt), special situation handling (off-topic questions, requests to skip content), and the default pedagogical stance (act as coach, verify comprehension before advancing).
+
+\subsection{Instructional Model: Structure}
+
+An instructional model defines teaching methodology as a sequence of pedagogical events. Each event has an identifier, name, detailed instructions for the LLM, and a trigger that determines when to advance to the next.
+
+\begin{lstlisting}
+model:
+  id: "bloom-8step-interactive"
+  name: "Bloom 8-Step Interactive"
+  version: "1.0"
+  philosophy: "Never advance without verification"
+
+  events:
+    - id: "E1_ACTIVATE"
+      name: "Activate Prior Knowledge"
+      instructions: |
+        Ask what the student knows about
+        the topic. Identify correct knowledge,
+        misconceptions, and gaps before
+        continuing.
+      transition_trigger:
+        condition: "student_response_received"
+        next_event: "E2_OBJECTIVES"
+
+    - id: "E2_OBJECTIVES"
+      name: "Present Objectives"
+      instructions: |
+        Present learning objectives clearly.
+        Explain what the student will be
+        able to do upon completion.
+      transition_trigger:
+        condition: "student_response_received"
+        next_event: "E3_EXPLAIN"
+\end{lstlisting}
+
+\textbf{Transition triggers} define when to advance to the next event, based on:
+
+\begin{itemize}
+    \item \texttt{student\_response\_received}: Wait for any student response.
+    \item \texttt{comprehension\_verified}: Wait for comprehension verification.
+    \item \texttt{explicit\_command}: Wait for explicit command (/next).
+    \item \texttt{auto}: Continue automatically without waiting for input.
+\end{itemize}
+
+\subsection{Learning Sequence: Structure}
+
+The learning sequence is the file that the teacher creates for their specific course. It inherits from an instructional model via \texttt{extends} and defines tutor profile, behaviors, and learning units.
+
+\begin{lstlisting}
+sequence:
+  id: "generative-ai-fundamentals"
+  name: "Generative AI Fundamentals"
+  version: "1.0"
+  description: "Tutor for basic concepts
+                of Generative AI"
+  author: "Pedro Pernias"
+
+  tutor_profile:
+    name: "Alex"
+    personality: |
+      Enthusiastic and patient AI tutor.
+      Uses everyday analogies to explain
+      technical concepts.
+      The Felix example is your favorite
+      for explaining attention.
+      Never say AI "understands" like humans.
+
+  extends: "instructional_model_bloom.yaml"
+
+  source_content:
+    - file: "content_generative_ai.md"
+      type: "reference"
+
+  behaviors:
+    response_length: "medium"
+    language: "en"
+\end{lstlisting}
+
+\textbf{Learning units} (\texttt{learning\_units}) structure the course content. Each unit is a discrete topic that passes through all events of the pedagogical model:
+
+\begin{lstlisting}
+  learning_units:
+    - id: "LU1"
+      title: "Foundation Models"
+      objectives:
+        - level: "understand"
+          description: "Explain what a
+                        foundation model is"
+      prompt: |
+        Key points:
+        - Large pre-trained models
+        - Serve as BASE for many tasks
+
+        Analogy: building foundation.
+
+        Examples: GPT, Claude, LLaMA.
+      next: "LU2"
+
+    - id: "LU4"
+      title: "Attention Mechanism"
+      objectives:
+        - level: "understand"
+          description: "Explain how attention
+                        works"
+      prompt: |
+        Use the Felix example:
+        "Felix saw a black cat and a white
+        cat. He gave food to it."
+
+        Problem: What does "it" refer to?
+        Solution: Attention allows "looking
+        back" to resolve references.
+      source_sections:
+        - "Section: Transformer Architecture"
+      next: "LU5"
+\end{lstlisting}
+
+Note that the \texttt{prompt} field is NOT what the tutor says to the student, but an instruction for the tutor about what to teach. It should include: structured key points, concrete examples, suggested analogies, and misconceptions to address.
+
+\subsection{Inheritance Mechanism (extends)}
+
+The \texttt{extends} field allows a learning sequence to inherit methodology from an instructional model. When the Engine processes a sequence with \texttt{extends}:
+
+\begin{enumerate}
+    \item Locates the referenced instructional model file.
+    \item Loads the model's event sequence (E1, E2, ..., En).
+    \item For each learning unit, executes all events in order.
+    \item Uses model instructions combined with the unit's prompt.
+    \item Manages transitions according to defined triggers.
+\end{enumerate}
+
+This mechanism allows the same Bloom 8-Step Interactive model to be applied to completely different courses: the model provides the \textbf{how} (activate prior knowledge, explain, verify, practice) and the sequence provides the \textbf{what} (Foundation Models, Transformers, Attention...).
+
+\subsection{Content Source: Structure}
+
+The content source is a separate file (typically Markdown) containing reference material. It is recommended when:
+
+\begin{itemize}
+    \item Content is extensive and does not fit comfortably in prompts.
+    \item Material is frequently updated (e.g., legal regulations).
+    \item Content expert and instructional designer are different people.
+    \item Clear separation of ``what'' from ``how'' is desired.
+\end{itemize}
+
+The recommended format uses Markdown with sections delimited by headers:
+
+\begin{lstlisting}
+## Section: Foundation Models
+
+Foundation Models are large-scale models
+pre-trained with enormous amounts of data.
+They serve as a base for multiple
+specific tasks...
+
+## Section: Transformer Architecture
+
+The Transformer revolutionized natural
+language processing by introducing the
+attention mechanism...
+\end{lstlisting}
+
+The sequence references specific sections via the \texttt{source\_sections} field:
+
+\begin{lstlisting}
+learning_units:
+  - id: "LU2"
+    title: "Transformer Architecture"
+    source_sections:
+      - "Section: Transformer Architecture"
+    prompt: |
+      Explain the Transformer architecture.
+      Emphasize that it replaced RNNs.
+\end{lstlisting}
+
+The Engine locates the relevant section and incorporates it into context when the prompt requires it. This allows updating content without modifying sequence structure.
+
+\subsection{JSON Schemas for Validation}
+
+To ensure correctness of TDL files, we have developed JSON Schema definitions that specify valid structure for each file type. These schemas enable automatic validation before deployment.
+
+The schema for instructional models verifies:
+
+\begin{itemize}
+    \item Presence of required fields (\texttt{model.id}, \texttt{model.events}).
+    \item Correct identifier format (lowercase, hyphens).
+    \item At least two events in the sequence.
+    \item Each event has \texttt{id}, \texttt{instructions}, and \texttt{transition\_trigger}.
+\end{itemize}
+
+The schema for learning sequences additionally verifies:
+
+\begin{itemize}
+    \item Presence of \texttt{extends} referencing a valid model.
+    \item Correct \texttt{tutor\_profile} structure with \texttt{name} and \texttt{personality}.
+    \item At least one learning unit defined with \texttt{id}, \texttt{title}, and \texttt{prompt}.
+    \item Consistency in \texttt{next} references between units.
+\end{itemize}
+
+\subsection{Validation Tool}
+
+We have developed a Python validator that uses JSON Schemas to verify TDL files:
+
+\begin{lstlisting}
+pip install tdl-validator
+tdl-validate learning_sequence.yaml \
+    --model model.yaml
+\end{lstlisting}
+
+The validator detects common errors such as missing fields, incorrect types, wrong indentation, or references to non-existent models, providing descriptive messages that facilitate correction.
+
+\subsection{Common Design Patterns}
+
+The TDL manual identifies five common design patterns:
+
+\begin{enumerate}
+    \item \textbf{Technical Concepts}: Bloom 8-Step model, frequent verification, everyday analogies, small focused units.
+
+    \item \textbf{Glossary}: Simplified model (Identify, Explain, Connect), no linear sequence, short responses, connections between terms.
+
+    \item \textbf{Practice with Exercises}: Dynamic problem generation, error-type-specific feedback, progressive difficulty.
+
+    \item \textbf{Case Studies}: Contextualized scenarios, guided decision-making, multiple possible paths.
+
+    \item \textbf{Exam Preparation}: Real exam-type questions, detailed answer explanations, weak area identification.
+\end{enumerate}

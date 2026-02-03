@@ -1,0 +1,127 @@
+% ============================================================================
+% III. FROM ADL 1.0 TO TDL: IDENTIFIED LIMITATIONS
+% ============================================================================
+\section{From ADL 1.0 to TDL: Identified Limitations}
+
+This section analyzes the limitations of ADL~1.0 that emerged when applying it to structured educational tutoring, and presents the design principles that guided TDL development. These limitations subsequently informed the design of ADL~2.0 \cite{pernias2025adl2}, establishing a clear chronological relationship: ADL~1.0 $\rightarrow$ TDL $\rightarrow$ ADL~2.0.
+
+\subsection{Critical Analysis of ADL 1.0 for Tutoring}
+
+Experience with ADL~1.0 revealed both strengths and limitations when applied specifically to structured educational tutoring.
+
+\subsubsection{Strengths of ADL 1.0}
+
+Commands enabled encapsulation of complex teaching strategies, decorators added stylistic flexibility, and workflows automated complete sequences. The separation between specification (created by the teacher) and execution (performed by the LLM) preserved pedagogical authorship.
+
+\subsubsection{Identified Limitations}
+
+However, we identified \textbf{five structural limitations} for specialized educational use:
+
+\textbf{L1. Monolithic Architecture}: Everything---assistant identity, behaviors, tools, content---is defined in a single ADL file. This hinders reuse: if two different courses want to use the same Socratic methodology, they must duplicate decorator and workflow definitions. There is no mechanism to share common structures across specifications.
+
+\textbf{L2. Implicit Pedagogical Method}: The pedagogical approach is dispersed across multiple commands and decorators. There is no explicit representation of the instructional sequence as a coherent unit. An external observer would have difficulty identifying what pedagogical model the assistant follows.
+
+\textbf{L3. Embedded Content}: The content to be taught is incorporated directly in command prompts. Updating content requires modifying the ADL specification, increasing the risk of introducing errors and making it difficult for content experts (without ADL knowledge) to contribute directly.
+
+\textbf{L4. Implicit Boundaries}: Behavioral constraints---what the assistant should \textit{not} do, when to defer to human judgment, limits of authority---were embedded within prompt text rather than explicitly declared. This made boundaries difficult to reason about, validate, or reuse across assistant specifications.
+
+\textbf{L5. Lack of Clear Inheritance Mechanism}: Extending an existing ADL specification required copying and modifying large portions of the description, increasing the risk of inconsistency and error. There was no principled mechanism for declarative specialization or controlled variation.
+
+\subsection{Lessons from the ADL Pilot}
+
+During the ADL pilot, we observed a revealing phenomenon: teachers invoked commands in remarkably consistent sequences. For example, a Tourism professor always started with /DAFO\_strengths +++step-by-step, followed by /DAFO\_weaknesses +++socratic, and finished with /DAFO\_review +++critique. This sequence repeated identically across different sessions and groups.
+
+This observation suggested that teachers have \textbf{methodological signatures}---stable teaching patterns they apply regardless of specific content. ADL workflows captured these sequences, but treated them as course-specific rather than as reusable methodologies.
+
+The conclusion was clear: we needed to separate \textbf{how to teach} (the methodology, applicable to multiple contents) from \textbf{what to teach} (the specific content of each course). This separation is precisely what TDL implements.
+
+\subsection{TDL Design Principles}
+
+Based on this analysis, we established five fundamental principles for TDL design:
+
+\begin{table}[htbp]
+\caption{TDL Design Principles}
+\label{tab:principles}
+\centering
+\begin{tabular}{p{2.2cm}p{5.3cm}}
+\toprule
+\textbf{Principle} & \textbf{Description} \\
+\midrule
+Separation of concerns & Each architectural layer has a single, well-defined responsibility \\
+\addlinespace
+Methodological reuse & Instructional models are reusable templates across multiple courses \\
+\addlinespace
+ID alignment & Instructional events align with established instructional design theories \\
+\addlinespace
+Content independence & Source content remains separate from methodological structure \\
+\addlinespace
+Portability & The specification works on any LLM platform without modification \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The principle of \textbf{separation of concerns} implies that modifying content does not require touching methodology, and vice versa. \textbf{Methodological reuse} allows a validated instructional model to be applied to courses from different disciplines. \textbf{ID alignment} ensures that TDL speaks the language of education professionals. \textbf{Content independence} facilitates subject matter experts contributing without knowing TDL. \textbf{Portability} avoids vendor lock-in and maximizes adoption.
+
+\subsection{From Monolithic to Decoupled}
+
+The transition from ADL~1.0 to TDL can be summarized as a shift from monolithic to decoupled architecture:
+
+\begin{table}[htbp]
+\caption{Comparison Between ADL 1.0 and TDL}
+\label{tab:comparison}
+\centering
+\begin{tabular}{p{2.2cm}p{2.4cm}p{2.4cm}}
+\toprule
+\textbf{Aspect} & \textbf{ADL 1.0} & \textbf{TDL} \\
+\midrule
+Scope & Generic assistants & Educational tutoring \\
+\addlinespace
+Architecture & Monolithic (1 file) & 4 decoupled layers \\
+\addlinespace
+Pedagogical method & Implicit in commands & Explicit in model \\
+\addlinespace
+Reuse & Per individual command & Per complete model \\
+\addlinespace
+Content & Embedded in prompts & Decoupled \\
+\addlinespace
+Boundaries & Implicit in text & Explicit declaration \\
+\addlinespace
+Inheritance & Copy-paste & Declarative extends \\
+\addlinespace
+ID alignment & Partial & Direct (Gagn\'{e}, Bloom) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+ADL~1.0 remains a valid option for assistants that are not strictly educational or for cases where the simplicity of a single file is preferable. TDL is specifically optimized for tutoring scenarios where formal instructional design adds value.
+
+\subsection{How These Limitations Informed ADL 2.0}
+
+The limitations identified through TDL development (L1--L5) directly informed the subsequent redesign of ADL as version 2.0. Table~\ref{tab:limitation_mapping} summarizes this relationship.
+
+\begin{table}[htbp]
+\caption{Mapping of TDL-Identified Limitations to ADL 2.0 Solutions}
+\label{tab:limitation_mapping}
+\centering
+\begin{tabular}{p{2.8cm}p{4.2cm}}
+\toprule
+\textbf{Limitation in ADL 1.0} & \textbf{Solution in ADL 2.0} \\
+\midrule
+L1. Monolithic architecture & Core/Profile separation \\
+\addlinespace
+L4. Implicit boundaries & Boundaries as mandatory first-class element \\
+\addlinespace
+L5. No inheritance & Declarative specialization via \texttt{extends} \\
+\addlinespace
+L2. Implicit pedagogy & \textit{(TDL-specific: Instructional Model layer)} \\
+\addlinespace
+L3. Embedded content & \textit{(TDL-specific: Content Source layer)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Limitations L1, L4, and L5 were general enough to warrant solutions at the ADL core level. ADL~2.0 addresses them through: (a) explicit separation between domain-agnostic core and domain-specific profiles; (b) elevation of boundaries to a mandatory specification component; and (c) support for declarative inheritance through the \texttt{extends} mechanism.
+
+Limitations L2 and L3, while identified through TDL development, are specific to the educational domain and are addressed by TDL's additional layers (Instructional Model and Content Source) rather than by ADL~2.0's generic core. This distinction validates ADL~2.0's design goal of providing a minimal, extensible core upon which domain-specific profiles can add specialized abstractions.
+
+Section~VIII provides a detailed demonstration that TDL can be expressed as an ADL~2.0 profile without loss of expressiveness.

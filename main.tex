@@ -1,0 +1,120 @@
+\documentclass[journal]{IEEEtran}
+
+% Basic packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{listings}
+
+% YAML language definition for listings
+\lstdefinelanguage{yaml}{
+  morekeywords={true,false,null,y,n},
+  sensitive=false,
+  morecomment=[l]{\#\#},
+  morestring=[b]",
+  morestring=[b]',
+  alsoletter={-},
+  tabsize=2
+}
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+
+% Code colors
+\definecolor{codegreen}{RGB}{34, 139, 34}
+\definecolor{codegray}{RGB}{128, 128, 128}
+\definecolor{codeblue}{RGB}{0, 0, 180}
+\definecolor{backcolour}{RGB}{248, 248, 248}
+
+% Listings configuration for YAML
+\lstset{
+    basicstyle=\footnotesize\ttfamily,
+    backgroundcolor=\color{backcolour},
+    frame=single,
+    framerule=0.5pt,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=2,
+    showstringspaces=false,
+    numbers=none,
+    xleftmargin=2pt,
+    xrightmargin=2pt,
+    aboveskip=6pt,
+    belowskip=6pt,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegray}\ttfamily,
+    stringstyle=\color{codegreen}
+}
+
+% Custom commands
+\newcommand{\tdl}{\textsc{tdl}}
+\newcommand{\adl}{\textsc{adl}}
+\newcommand{\yamlformat}{\textsc{yaml}}
+
+\begin{document}
+
+\title{TDL: A Four-Layer Architecture for LLM-Based Tutors with Decoupled Instructional Methodology}
+
+\author{
+    Pedro~A.~Pernías~Peco
+    and
+    M.~Pilar~Escobar~Esteban
+    \thanks{P. A. Pernías Peco and M. P. Escobar Esteban are with the Department of Software and Computing Systems, University of Alicante, 03690 Alicante, Spain (e-mail: p.pernias@ua.es; pilar.escobar@ua.es).}
+}
+
+\markboth{IEEE Transactions on Learning Technologies}{}
+
+\maketitle
+
+% ============================================================================
+% ABSTRACT
+% ============================================================================
+
+\begin{abstract}
+The deployment of Large Language Models (LLMs) as educational tutors requires more than conversational ability---it demands systematic specification of pedagogical behavior. Research documents that LLMs are not ``good tutors by default'': they provide direct answers instead of guiding learning through productive challenge. This paper presents TDL (Tutor Description Language), a four-layer architecture for specifying LLM-based tutors that explicitly separates instructional methodology from content. TDL evolved from practical experience with ADL~1.0 (Assistant Description Language), whose limitations in educational contexts motivated key design decisions. We identify five structural limitations of ADL~1.0---monolithic architecture, implicit pedagogy, embedded content, implicit boundaries, and lack of inheritance---and show how TDL addresses them through a layered design with explicit Instructional Models aligned with Gagn\'{e}'s instructional events and Bloom's taxonomy. The design patterns introduced in TDL informed the subsequent development of ADL~2.0, which generalized the inheritance and boundary mechanisms. We demonstrate that TDL's pedagogical decoupling can be expressed as an ADL~2.0 profile without loss of expressiveness, validating the pattern's applicability to other assistant domains. The specification is portable across ChatGPT, Claude, Gemini, and OpenWebUI. We present two reference instructional models, validation tools, and propose research hypotheses for empirical validation of TDL's impact on learning outcomes and instructor workload.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Tutor Description Language, Intelligent Tutoring Systems, Domain-Specific Languages, Instructional Design, Large Language Models, AI in Education, Context Engineering
+\end{IEEEkeywords}
+
+% ============================================================================
+% DOCUMENT BODY
+% ============================================================================
+
+\input{sections/01-introduction}
+\input{sections/02-background}
+\input{sections/03-adl-to-tdl}
+\input{sections/04-architecture}
+\input{sections/05-components}
+\input{sections/06-instructional-models}
+\input{sections/07-portability}
+\input{sections/08-adl2-alignment}
+\input{sections/09-discussion}
+\input{sections/10-conclusions}
+
+% ============================================================================
+% ACKNOWLEDGMENTS
+% ============================================================================
+
+\section*{Acknowledgments}
+This work was partially funded by project AI4ProSa.
+
+% ============================================================================
+% BIBLIOGRAPHY
+% ============================================================================
+
+\input{sections/references}
+
+\end{document}
