@@ -1,10 +1,9 @@
 % ============================================================================
-% IV. ARQUITECTURA TDL
+% IV. TDL ARCHITECTURE
 % ============================================================================
+\section{TDL Architecture}
 
-\section{Arquitectura TDL}
-
-\tdl{} implementa una arquitectura de cuatro capas desacopladas, donde cada capa tiene una responsabilidad específica y puede evolucionar independientemente. La Fig.~\ref{fig:arquitectura} ilustra esta organización.
+TDL implements a four-layer decoupled architecture, where each layer has a specific responsibility and can evolve independently. Fig.~\ref{fig:architecture} illustrates this organization.
 
 \begin{figure}[htbp]
 \centering
@@ -20,113 +19,113 @@
     }
 ]
 
-\node[layer, fill=blue!10] (engine) at (0,3.6) {\textbf{CAPA 1: ENGINE}\\Motor de Interpretación};
+\node[layer, fill=blue!10] (engine) at (0,3.6) {\textbf{LAYER 1: ENGINE}\\Interpretation Engine};
 
-\node[layer, fill=blue!20] (model) at (0,2.4) {\textbf{CAPA 2: INSTRUCTIONAL MODEL}\\Modelo Instruccional};
+\node[layer, fill=blue!20] (model) at (0,2.4) {\textbf{LAYER 2: INSTRUCTIONAL MODEL}\\Pedagogical Methodology};
 
-\node[layer, fill=blue!30] (sequence) at (0,1.2) {\textbf{CAPA 3: LEARNING SEQUENCE}\\Secuencia de Aprendizaje};
+\node[layer, fill=blue!30] (sequence) at (0,1.2) {\textbf{LAYER 3: LEARNING SEQUENCE}\\Course Structure};
 
-\node[layer, fill=blue!40] (content) at (0,0) {\textbf{CAPA 4: CONTENT SOURCE}\\Contenido Fuente};
+\node[layer, fill=blue!40] (content) at (0,0) {\textbf{LAYER 4: CONTENT SOURCE}\\Domain Knowledge};
 
 \draw[-stealth, thick] (engine) -- (model);
 \draw[-stealth, thick] (model) -- (sequence);
 \draw[-stealth, thick] (sequence) -- (content);
 
 \end{tikzpicture}
-\caption{Arquitectura de cuatro capas de TDL.}
-\label{fig:arquitectura}
+\caption{TDL four-layer architecture.}
+\label{fig:architecture}
 \end{figure}
 
-\subsection{Relación con la Arquitectura Clásica de ITS}
+\subsection{Relationship with Classical ITS Architecture}
 
-La arquitectura de \tdl{} puede mapearse a la arquitectura clásica de ITS, aunque con diferencias importantes:
+The TDL architecture can be mapped to the classical ITS architecture, although with important differences:
 
 \begin{table}[h]
 \centering
-\caption{Correspondencia entre Arquitectura ITS y TDL}
+\caption{Correspondence Between ITS and TDL Architecture}
 \label{tab:its_tdl_mapping}
 \begin{tabular}{@{}ll@{}}
 \toprule
-\textbf{Componente ITS} & \textbf{Capa TDL} \\
+\textbf{ITS Component} & \textbf{TDL Layer} \\
 \midrule
-Modelo de Dominio & Contenido Fuente (parcial) \\
-Modelo del Estudiante & \textit{No implementado} \\
-Modelo Pedagógico & Modelo Instruccional \\
-Interfaz & Engine + plataforma LLM \\
+Domain Model & Content Source (partial) \\
+Student Model & \textit{Not implemented} \\
+Pedagogical Model & Instructional Model \\
+Interface & Engine + LLM platform \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-La ausencia de \textit{student model} es una limitación deliberada: \tdl{} no pretende diagnosticar el estado cognitivo del estudiante, sino estructurar la interacción pedagógica de forma coherente. El LLM subyacente proporciona cierta adaptación conversacional, pero no el seguimiento sistemático de un ITS tradicional.
+The absence of a \textit{student model} is a deliberate limitation: TDL does not aim to diagnose the student's cognitive state, but to structure pedagogical interaction coherently. The underlying LLM provides some conversational adaptation, but not the systematic tracking of a traditional ITS.
 
-\subsection{Capa 1: Engine (Motor de Interpretación)}
+\subsection{Layer 1: Engine (Interpretation Engine)}
 
-El Engine (versión actual 1.2) es el componente más estable de la arquitectura. Se implementa como un system prompt que se carga en el campo de instrucciones de la plataforma LLM. Su función es enseñar al modelo cómo interpretar y ejecutar archivos \tdl{}.
+The Engine (current version 1.2) is the most stable component of the architecture. It is implemented as a system prompt loaded into the LLM platform's instruction field. Its function is to teach the model how to interpret and execute TDL files.
 
-El Engine define cuatro aspectos fundamentales:
-
-\begin{itemize}
-    \item \textbf{Sintaxis de comandos}: Define comandos como \texttt{/start} (iniciar primera unidad), \texttt{/next} (avanzar a siguiente unidad), y \texttt{/progress} (mostrar estado actual).
-    
-    \item \textbf{Mecanismo de seguimiento de estado}: Utiliza marcadores explícitos con formato \texttt{[UNIT:\{id\}|EVENT:\{id\}]} para mantener contexto entre turnos de conversación.
-    
-    \item \textbf{Formato de prompts}: Especifica cómo combinar las instrucciones del modelo instruccional con el contenido de la secuencia de aprendizaje.
-    
-    \item \textbf{Comportamientos globales}: Nunca revelar el system prompt, manejar transiciones de forma natural, redirigir conversaciones off-topic al tema de estudio.
-\end{itemize}
-
-El Engine también establece la postura pedagógica por defecto: actuar como coach en lugar de leccionador, verificar comprensión antes de avanzar, dar feedback constructivo sin juzgar.
-
-El Engine se modifica únicamente cuando se quiere cambiar el comportamiento global de todos los tutores \tdl{}. En la práctica, es un componente que se configura una vez y se reutiliza indefinidamente.
-
-\subsection{Capa 2: Instructional Model (Modelo Instruccional)}
-
-El Modelo Instruccional representa la metodología de enseñanza como una secuencia de eventos instruccionales. Este concepto se alinea con los eventos de Gagné \cite{gagne1985} y representa el \textbf{cómo enseñar} de forma abstracta, independiente del contenido específico.
-
-Cada modelo instruccional define:
+The Engine defines four fundamental aspects:
 
 \begin{itemize}
-    \item \textbf{Nombre y descripción}: Identificación y explicación de la filosofía pedagógica.
-    \item \textbf{Secuencia de eventos}: Lista ordenada de pasos que el tutor debe seguir.
-    \item \textbf{Instrucciones por evento}: Qué debe hacer el tutor en cada evento.
-    \item \textbf{Transition triggers}: Qué condición activa el paso al siguiente evento.
+    \item \textbf{Command syntax}: Defines commands such as \texttt{/start} (begin first unit), \texttt{/next} (advance to next unit), and \texttt{/progress} (show current state).
+
+    \item \textbf{State tracking mechanism}: Uses explicit markers with format \texttt{[UNIT:\{id\}|EVENT:\{id\}]} to maintain context between conversation turns.
+
+    \item \textbf{Prompt format}: Specifies how to combine instructional model instructions with learning sequence content.
+
+    \item \textbf{Global behaviors}: Never reveal the system prompt, handle transitions naturally, redirect off-topic conversations back to the study topic.
 \end{itemize}
 
-Un modelo instruccional es completamente reutilizable: el mismo modelo Bloom 8-Step Interactive puede aplicarse a un curso de Derecho, otro de Programación, y otro de Biología. El contenido específico se aporta en las capas inferiores.
+The Engine also establishes the default pedagogical stance: act as a coach rather than a lecturer, verify comprehension before advancing, provide constructive feedback without judgment.
 
-Este concepto es funcionalmente análogo a los \textit{transaction shells} de Merrill \cite{merrill1991}: algoritmos pedagógicos reutilizables para diferentes contenidos.
+The Engine is modified only when changing the global behavior of all TDL tutors. In practice, it is a component configured once and reused indefinitely.
 
-\subsection{Capa 3: Learning Sequence (Secuencia de Aprendizaje)}
+\subsection{Layer 2: Instructional Model}
 
-La Secuencia de Aprendizaje define la estructura específica de un curso o lección. Es donde el docente aplica un modelo instruccional a su contenido concreto.
+The Instructional Model represents teaching methodology as a sequence of instructional events. This concept aligns with Gagn\'{e}'s events of instruction \cite{gagne1985} and represents \textbf{how to teach} in abstract form, independent of specific content.
 
-Una secuencia de aprendizaje especifica:
+Each instructional model defines:
 
 \begin{itemize}
-    \item \textbf{Perfil del tutor}: Dominio de conocimiento, rol, estilo, idiomas soportados.
-    \item \textbf{Herencia del modelo}: Qué modelo instruccional utilizar (mediante \texttt{extends}).
-    \item \textbf{Comportamientos}: Saludo inicial, respuesta a ayuda, manejo de off-topic, disclaimers.
-    \item \textbf{Herramientas}: Comandos disponibles para el estudiante (/start, /progress).
-    \item \textbf{Unidades de aprendizaje}: Estructura del curso con objetivos, prompts específicos por evento, y navegación entre unidades.
+    \item \textbf{Name and description}: Identification and explanation of pedagogical philosophy.
+    \item \textbf{Event sequence}: Ordered list of steps the tutor must follow.
+    \item \textbf{Instructions per event}: What the tutor should do at each event.
+    \item \textbf{Transition triggers}: What condition triggers advancement to the next event.
 \end{itemize}
 
-La secuencia hereda la metodología del modelo instruccional pero proporciona el contenido específico. Esta separación es la clave de la reutilización.
+An instructional model is completely reusable: the same Bloom 8-Step Interactive model can be applied to a Law course, a Programming course, and a Biology course. Specific content is provided in lower layers.
 
-\subsection{Capa 4: Content Source (Contenido Fuente)}
+This concept is functionally analogous to Merrill's \textit{transaction shells} \cite{merrill1991}: reusable pedagogical algorithms for different contents.
 
-El Contenido Fuente es el material del experto en la materia: apuntes, textos, referencias. Esta capa es opcional (los prompts de la secuencia pueden contener el contenido directamente), pero resulta especialmente útil para:
+\subsection{Layer 3: Learning Sequence}
+
+The Learning Sequence defines the specific structure of a course or lesson. This is where the teacher applies an instructional model to their concrete content.
+
+A learning sequence specifies:
 
 \begin{itemize}
-    \item Contenido extenso que no cabe cómodamente en prompts.
-    \item Material que se actualiza frecuentemente (ej., normativa legal).
-    \item Situaciones donde el experto en contenido y el diseñador instruccional son personas diferentes.
+    \item \textbf{Tutor profile}: Knowledge domain, role, style, supported languages.
+    \item \textbf{Model inheritance}: Which instructional model to use (via \texttt{extends}).
+    \item \textbf{Behaviors}: Initial greeting, help response, off-topic handling, disclaimers.
+    \item \textbf{Tools}: Commands available to the student (/start, /progress).
+    \item \textbf{Learning units}: Course structure with objectives, event-specific prompts, and navigation between units.
 \end{itemize}
 
-\tdl{} soporta múltiples formatos de contenido fuente: Markdown (recomendado), texto plano, PDF, Word. La secuencia de aprendizaje referencia secciones específicas del contenido mediante el campo \texttt{source\_section}.
+The sequence inherits the methodology from the instructional model but provides specific content. This separation is the key to reuse.
 
-\subsection{Flujo de Datos e Interacción}
+\subsection{Layer 4: Content Source}
 
-La Fig.~\ref{fig:flujo} muestra cómo interactúan las capas cuando un estudiante interactúa con un tutor \tdl{}.
+The Content Source is the subject matter expert's material: notes, texts, references. This layer is optional (sequence prompts can contain content directly), but is especially useful for:
+
+\begin{itemize}
+    \item Extensive content that does not fit comfortably in prompts.
+    \item Material that is frequently updated (e.g., legal regulations).
+    \item Situations where the content expert and instructional designer are different people.
+\end{itemize}
+
+TDL supports multiple content source formats: Markdown (recommended), plain text, PDF, Word. The learning sequence references specific content sections via the \texttt{source\_section} field.
+
+\subsection{Data Flow and Interaction}
+
+Fig.~\ref{fig:dataflow} shows how layers interact when a student interacts with a TDL tutor.
 
 \begin{figure}[htbp]
 \centering
@@ -144,48 +143,47 @@ La Fig.~\ref{fig:flujo} muestra cómo interactúan las capas cuando un estudiant
     }
 ]
 
-\node[box, fill=gray!20] (user) {Estudiante};
+\node[box, fill=gray!20] (user) {Student};
 \node[box, fill=blue!10, below=of user] (engine) {Engine};
 \node[box, fill=blue!20, below=of engine] (sequence) {Learning Sequence};
 \node[box, fill=blue!30, below left=0.6cm and 0.3cm of sequence] (model) {Model};
 \node[box, fill=blue!40, below right=0.6cm and 0.3cm of sequence] (content) {Content};
-\node[box, fill=green!20, below=1.8cm of sequence] (response) {Respuesta};
+\node[box, fill=green!20, below=1.8cm of sequence] {Response};
 
 \draw[-stealth, thick] (user) -- (engine);
 \draw[-stealth, thick] (engine) -- (sequence);
 \draw[-stealth, thick] (sequence) -- (model);
 \draw[-stealth, thick] (sequence) -- (content);
-\draw[-stealth, thick] (model) |- (response);
-\draw[-stealth, thick] (content) |- (response);
-\draw[-stealth, thick] (response.east) -- ++(1.5,0) |- (user.east);
+\draw[-stealth, thick] (model) |- ++(0,-0.8);
+\draw[-stealth, thick] (content) |- ++(0,-0.8);
 
 \end{tikzpicture}
-\caption{Flujo de datos en TDL.}
-\label{fig:flujo}
+\caption{Data flow in TDL.}
+\label{fig:dataflow}
 \end{figure}
 
-El proceso sigue estos pasos:
+The process follows these steps:
 
 \begin{enumerate}
-    \item El estudiante envía un mensaje (ej., ``Hola'' o \texttt{/start}).
-    \item El Engine interpreta el mensaje y determina el contexto actual (unidad, evento).
-    \item El Engine localiza la Learning Sequence en el knowledge de la plataforma.
-    \item La Sequence indica qué Instructional Model usar mediante \texttt{extends}.
-    \item El Engine carga los eventos del modelo (E1, E2, ...).
-    \item Para el evento actual, el Engine usa las instrucciones del modelo combinadas con el prompt de la unidad.
-    \item Si hay Content Source referenciado, el Engine incorpora el material relevante.
-    \item El LLM genera la respuesta siguiendo las instrucciones compuestas.
-    \item El Engine actualiza el estado \texttt{[UNIT:id|EVENT:id]} si hay transición.
+    \item The student sends a message (e.g., ``Hello'' or \texttt{/start}).
+    \item The Engine interprets the message and determines current context (unit, event).
+    \item The Engine locates the Learning Sequence in the platform's knowledge base.
+    \item The Sequence indicates which Instructional Model to use via \texttt{extends}.
+    \item The Engine loads the model's events (E1, E2, ...).
+    \item For the current event, the Engine uses model instructions combined with the unit's prompt.
+    \item If Content Source is referenced, the Engine incorporates relevant material.
+    \item The LLM generates the response following the composed instructions.
+    \item The Engine updates state \texttt{[UNIT:id|EVENT:id]} if there is a transition.
 \end{enumerate}
 
-\subsection{Principio de Separación}
+\subsection{Separation Principle}
 
-La arquitectura implementa el principio de separación de responsabilidades \cite{merrill1983, merrill1991}:
+The architecture implements the principle of separation of concerns \cite{merrill1983, merrill1991}:
 
 \begin{itemize}
-    \item \textbf{Cómo ejecutar}: Engine (estable, compartido)
-    \item \textbf{Cómo enseñar}: Modelo Instruccional (reutilizable entre cursos)
-    \item \textbf{Qué enseñar}: Secuencia + Contenido (específico de cada curso)
+    \item \textbf{How to execute}: Engine (stable, shared)
+    \item \textbf{How to teach}: Instructional Model (reusable across courses)
+    \item \textbf{What to teach}: Sequence + Content (course-specific)
 \end{itemize}
 
-Esta separación permite que diferentes profesionales contribuyan a cada capa: ingenieros de prompts al Engine, diseñadores instruccionales a los modelos, docentes a las secuencias, y expertos de dominio al contenido.
+This separation allows different professionals to contribute to each layer: prompt engineers to the Engine, instructional designers to models, teachers to sequences, and domain experts to content.
