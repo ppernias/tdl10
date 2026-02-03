@@ -1,106 +1,127 @@
 % ============================================================================
-% III. DE ADL A TDL
+% III. FROM ADL 1.0 TO TDL: IDENTIFIED LIMITATIONS
 % ============================================================================
+\section{From ADL 1.0 to TDL: Identified Limitations}
 
-\section{De ADL a TDL: Motivación y Principios de Diseño}
+This section analyzes the limitations of ADL~1.0 that emerged when applying it to structured educational tutoring, and presents the design principles that guided TDL development. These limitations subsequently informed the design of ADL~2.0 \cite{pernias2025adl2}, establishing a clear chronological relationship: ADL~1.0 $\rightarrow$ TDL $\rightarrow$ ADL~2.0.
 
-Esta sección presenta el trabajo previo con \adl{} y analiza las motivaciones para su evolución hacia \tdl{}.
+\subsection{Critical Analysis of ADL 1.0 for Tutoring}
 
-\subsection{Assistant Description Language (ADL)}
+Experience with ADL~1.0 revealed both strengths and limitations when applied specifically to structured educational tutoring.
 
-Nuestro trabajo previo con \adl{} \cite{pernias2025adl} introdujo un lenguaje estructurado basado en \yamlformat{} para que los docentes codificaran asistentes educativos basados en LLM. \adl{} demostró que es posible capturar la expertise pedagógica de un docente en una especificación formal que un LLM puede ejecutar fielmente.
+\subsubsection{Strengths of ADL 1.0}
 
-\adl{} definió cuatro tipos de herramientas pedagógicas:
+Commands enabled encapsulation of complex teaching strategies, decorators added stylistic flexibility, and workflows automated complete sequences. The separation between specification (created by the teacher) and execution (performed by the LLM) preserved pedagogical authorship.
 
-\begin{itemize}
-    \item \textbf{Commands} (/command): Acciones pedagógicas autocontenidas, desde explicaciones simples hasta procedimientos multi-paso. Cada command encapsula una estrategia de enseñanza específica.
-    \item \textbf{Options} (/option): Modificadores que ajustan el comportamiento global sin asociarse a contenido específico, como nivel de detalle o estilo de comunicación.
-    \item \textbf{Decorators} (+++decorator): Estilos pedagógicos que modifican cómo se ejecuta un command. Por ejemplo, +++socratic transforma cualquier command en una serie de preguntas guiadas.
-    \item \textbf{Workflows} (/workflow): Secuencias automatizadas de commands para lecciones completas, permitiendo estructurar sesiones de aprendizaje coherentes.
-\end{itemize}
+\subsubsection{Identified Limitations}
 
-Un piloto con 30 estudiantes en un curso de Turismo mostró resultados positivos: el 70\% usó el asistente frecuentemente, el 83\% valoró las respuestas como útiles, y el 100\% recomendó continuar usándolo. Los docentes percibieron la herramienta como una extensión de su práctica pedagógica, no como un reemplazo.
+However, we identified \textbf{five structural limitations} for specialized educational use:
 
-\subsection{Análisis Crítico de ADL para Tutorías}
+\textbf{L1. Monolithic Architecture}: Everything---assistant identity, behaviors, tools, content---is defined in a single ADL file. This hinders reuse: if two different courses want to use the same Socratic methodology, they must duplicate decorator and workflow definitions. There is no mechanism to share common structures across specifications.
 
-La experiencia con \adl{} reveló tanto fortalezas como limitaciones cuando se aplica específicamente a tutorías educativas estructuradas.
+\textbf{L2. Implicit Pedagogical Method}: The pedagogical approach is dispersed across multiple commands and decorators. There is no explicit representation of the instructional sequence as a coherent unit. An external observer would have difficulty identifying what pedagogical model the assistant follows.
 
-\subsubsection{Fortalezas de ADL}
+\textbf{L3. Embedded Content}: The content to be taught is incorporated directly in command prompts. Updating content requires modifying the ADL specification, increasing the risk of introducing errors and making it difficult for content experts (without ADL knowledge) to contribute directly.
 
-Los commands permitieron encapsular estrategias de enseñanza complejas, los decorators añadieron flexibilidad estilística, y los workflows automatizaron secuencias completas. La separación entre la especificación (creada por el docente) y la ejecución (realizada por el LLM) preservó la autoría pedagógica.
+\textbf{L4. Implicit Boundaries}: Behavioral constraints---what the assistant should \textit{not} do, when to defer to human judgment, limits of authority---were embedded within prompt text rather than explicitly declared. This made boundaries difficult to reason about, validate, or reuse across assistant specifications.
 
-\subsubsection{Limitaciones Identificadas}
+\textbf{L5. Lack of Clear Inheritance Mechanism}: Extending an existing ADL specification required copying and modifying large portions of the description, increasing the risk of inconsistency and error. There was no principled mechanism for declarative specialization or controlled variation.
 
-Sin embargo, identificamos cuatro limitaciones principales para el uso educativo especializado:
+\subsection{Lessons from the ADL Pilot}
 
-\textbf{Arquitectura monolítica}: Todo ---identidad del asistente, comportamientos, herramientas, contenido--- se define en un único archivo \adl{}. Esto dificulta la reutilización: si dos cursos diferentes quieren usar la misma metodología socrática, deben duplicar las definiciones de decorators y workflows.
+During the ADL pilot, we observed a revealing phenomenon: teachers invoked commands in remarkably consistent sequences. For example, a Tourism professor always started with /DAFO\_strengths +++step-by-step, followed by /DAFO\_weaknesses +++socratic, and finished with /DAFO\_review +++critique. This sequence repeated identically across different sessions and groups.
 
-\textbf{Método pedagógico implícito}: El enfoque pedagógico queda disperso entre múltiples commands y decorators. No existe una representación explícita de la secuencia instruccional como unidad coherente. Un observador externo tendría dificultades para identificar qué modelo pedagógico sigue el asistente.
+This observation suggested that teachers have \textbf{methodological signatures}---stable teaching patterns they apply regardless of specific content. ADL workflows captured these sequences, but treated them as course-specific rather than as reusable methodologies.
 
-\textbf{Contenido embebido}: El contenido a enseñar se incorpora directamente en los prompts de los commands. Actualizar el contenido requiere modificar la especificación \adl{}, aumentando el riesgo de introducir errores y dificultando que expertos en contenido (sin conocimiento de \adl{}) contribuyan directamente.
+The conclusion was clear: we needed to separate \textbf{how to teach} (the methodology, applicable to multiple contents) from \textbf{what to teach} (the specific content of each course). This separation is precisely what TDL implements.
 
-\textbf{Dificultad para escalar metodologías}: Un diseñador instruccional que desarrolle una metodología efectiva no puede compartirla fácilmente con otros docentes. Cada nuevo curso requiere recrear la estructura metodológica desde cero.
+\subsection{TDL Design Principles}
 
-\subsection{Lecciones del Piloto ADL}
-
-Durante el piloto de \adl{}, observamos un fenómeno revelador: los docentes invocaban los commands en secuencias notablemente consistentes. Por ejemplo, una profesora de Turismo siempre comenzaba con /DAFO\_strengths +++step-by-step, seguido de /DAFO\_weaknesses +++socratic, y finalizaba con /DAFO\_review +++critique. Esta secuencia se repetía idénticamente en diferentes sesiones y grupos.
-
-Esta observación sugirió que los docentes tienen \textbf{firmas metodológicas} ---patrones estables de enseñanza que aplican independientemente del contenido específico. Los workflows de \adl{} capturaban estas secuencias, pero las trataban como específicas de cada curso en lugar de como metodologías reutilizables.
-
-La conclusión fue clara: necesitábamos separar el \textbf{cómo enseñar} (la metodología, aplicable a múltiples contenidos) del \textbf{qué enseñar} (el contenido específico de cada curso). Esta separación es precisamente lo que \tdl{} implementa.
-
-\subsection{Principios de Diseño de TDL}
-
-Basándonos en este análisis, establecimos cinco principios fundamentales para el diseño de \tdl{}:
+Based on this analysis, we established five fundamental principles for TDL design:
 
 \begin{table}[htbp]
-\caption{Principios de Diseño de TDL}
-\label{tab:principios}
+\caption{TDL Design Principles}
+\label{tab:principles}
 \centering
-\begin{tabular}{p{2cm}p{5.5cm}}
+\begin{tabular}{p{2.2cm}p{5.3cm}}
 \toprule
-\textbf{Principio} & \textbf{Descripción} \\
+\textbf{Principle} & \textbf{Description} \\
 \midrule
-Separación de responsabilidades & Cada capa de la arquitectura tiene una única responsabilidad bien definida \\
+Separation of concerns & Each architectural layer has a single, well-defined responsibility \\
 \addlinespace
-Reutilización metodológica & Los modelos instruccionales son plantillas reutilizables entre múltiples cursos \\
+Methodological reuse & Instructional models are reusable templates across multiple courses \\
 \addlinespace
-Alineamiento con DI & Los eventos instruccionales se alinean con teorías de diseño instruccional establecidas \\
+ID alignment & Instructional events align with established instructional design theories \\
 \addlinespace
-Independencia del contenido & El contenido fuente se mantiene separado de la estructura metodológica \\
+Content independence & Source content remains separate from methodological structure \\
 \addlinespace
-Portabilidad & La especificación funciona en cualquier plataforma LLM sin modificaciones \\
+Portability & The specification works on any LLM platform without modification \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-El principio de \textbf{separación de responsabilidades} implica que modificar el contenido no requiere tocar la metodología, y viceversa. La \textbf{reutilización metodológica} permite que un modelo instruccional validado se aplique a cursos de diferentes disciplinas. El \textbf{alineamiento con diseño instruccional} garantiza que \tdl{} hable el lenguaje de los profesionales de la educación. La \textbf{independencia del contenido} facilita que expertos en la materia contribuyan sin conocer \tdl{}. La \textbf{portabilidad} evita el vendor lock-in y maximiza la adopción.
+The principle of \textbf{separation of concerns} implies that modifying content does not require touching methodology, and vice versa. \textbf{Methodological reuse} allows a validated instructional model to be applied to courses from different disciplines. \textbf{ID alignment} ensures that TDL speaks the language of education professionals. \textbf{Content independence} facilitates subject matter experts contributing without knowing TDL. \textbf{Portability} avoids vendor lock-in and maximizes adoption.
 
-\subsection{De Monolítico a Desacoplado}
+\subsection{From Monolithic to Decoupled}
 
-La transición de \adl{} a \tdl{} puede resumirse como un cambio de arquitectura monolítica a arquitectura desacoplada:
+The transition from ADL~1.0 to TDL can be summarized as a shift from monolithic to decoupled architecture:
 
 \begin{table}[htbp]
-\caption{Comparativa entre ADL y TDL}
-\label{tab:comparativa}
+\caption{Comparison Between ADL 1.0 and TDL}
+\label{tab:comparison}
 \centering
-\begin{tabular}{p{1.8cm}p{2.5cm}p{2.5cm}}
+\begin{tabular}{p{2.2cm}p{2.4cm}p{2.4cm}}
 \toprule
-\textbf{Aspecto} & \textbf{ADL} & \textbf{TDL} \\
+\textbf{Aspect} & \textbf{ADL 1.0} & \textbf{TDL} \\
 \midrule
-Alcance & Asistentes genéricos & Tutorías educativas \\
+Scope & Generic assistants & Educational tutoring \\
 \addlinespace
-Arquitectura & Monolítica (1 archivo) & 4 capas desacopladas \\
+Architecture & Monolithic (1 file) & 4 decoupled layers \\
 \addlinespace
-Método pedagógico & Implícito en commands & Explícito en modelo \\
+Pedagogical method & Implicit in commands & Explicit in model \\
 \addlinespace
-Reutilización & Por command individual & Por modelo completo \\
+Reuse & Per individual command & Per complete model \\
 \addlinespace
-Contenido & Embebido en prompts & Desacoplado \\
+Content & Embedded in prompts & Decoupled \\
 \addlinespace
-Alineamiento con DI & Parcial & Directo (Gagné, Bloom) \\
+Boundaries & Implicit in text & Explicit declaration \\
+\addlinespace
+Inheritance & Copy-paste & Declarative extends \\
+\addlinespace
+ID alignment & Partial & Direct (Gagn\'{e}, Bloom) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\adl{} permanece como una opción válida para asistentes no estrictamente educativos o para casos donde la simplicidad de un único archivo es preferible. \tdl{} está optimizado específicamente para tutorías donde el diseño instruccional formal aporta valor.
+ADL~1.0 remains a valid option for assistants that are not strictly educational or for cases where the simplicity of a single file is preferable. TDL is specifically optimized for tutoring scenarios where formal instructional design adds value.
+
+\subsection{How These Limitations Informed ADL 2.0}
+
+The limitations identified through TDL development (L1--L5) directly informed the subsequent redesign of ADL as version 2.0. Table~\ref{tab:limitation_mapping} summarizes this relationship.
+
+\begin{table}[htbp]
+\caption{Mapping of TDL-Identified Limitations to ADL 2.0 Solutions}
+\label{tab:limitation_mapping}
+\centering
+\begin{tabular}{p{2.8cm}p{4.2cm}}
+\toprule
+\textbf{Limitation in ADL 1.0} & \textbf{Solution in ADL 2.0} \\
+\midrule
+L1. Monolithic architecture & Core/Profile separation \\
+\addlinespace
+L4. Implicit boundaries & Boundaries as mandatory first-class element \\
+\addlinespace
+L5. No inheritance & Declarative specialization via \texttt{extends} \\
+\addlinespace
+L2. Implicit pedagogy & \textit{(TDL-specific: Instructional Model layer)} \\
+\addlinespace
+L3. Embedded content & \textit{(TDL-specific: Content Source layer)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Limitations L1, L4, and L5 were general enough to warrant solutions at the ADL core level. ADL~2.0 addresses them through: (a) explicit separation between domain-agnostic core and domain-specific profiles; (b) elevation of boundaries to a mandatory specification component; and (c) support for declarative inheritance through the \texttt{extends} mechanism.
+
+Limitations L2 and L3, while identified through TDL development, are specific to the educational domain and are addressed by TDL's additional layers (Instructional Model and Content Source) rather than by ADL~2.0's generic core. This distinction validates ADL~2.0's design goal of providing a minimal, extensible core upon which domain-specific profiles can add specialized abstractions.
+
+Section~VIII provides a detailed demonstration that TDL can be expressed as an ADL~2.0 profile without loss of expressiveness.
