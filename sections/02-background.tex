@@ -1,80 +1,99 @@
 % ============================================================================
-% II. ESTADO DEL ARTE EN ITS
+% II. BACKGROUND AND RELATED WORK
 % ============================================================================
+\section{Background and Related Work}
 
-\section{Sistemas de Tutoría Inteligente: Estado del Arte}
+This section reviews two decades of research on Intelligent Tutoring Systems (2005--2025), focusing on architecture, effectiveness evidence, authoring tools, and the transition to LLMs. We also examine lessons from IMS Learning Design, recent prompt languages, and our prior work with ADL~1.0.
 
-Esta sección revisa dos décadas de investigación en ITS (2005-2025), centrándose en la arquitectura, evidencia de efectividad, herramientas de autoría, y la transición hacia LLM.
+\subsection{Classical ITS Architecture}
 
-\subsection{Arquitectura Clásica de ITS}
-
-La arquitectura canónica de un ITS, establecida por Nwana \cite{nwana1990} y refinada en trabajos posteriores \cite{woolf2009}, comprende cuatro componentes interrelacionados:
+The canonical architecture of an Intelligent Tutoring System, established by Nwana \cite{nwana1990} and refined in subsequent work \cite{woolf2009}, comprises four interrelated components:
 
 \begin{enumerate}
-    \item \textbf{Modelo de Dominio}: Representa el conocimiento experto que el sistema enseña.
-    
-    \item \textbf{Modelo del Estudiante}: Mantiene una representación del estado cognitivo del aprendiz: qué sabe, qué misconceptions tiene, y cómo progresa.
-    
-    \item \textbf{Modelo Pedagógico}: Contiene las estrategias instruccionales y decide qué acción tomar dado el estado del estudiante y el dominio.
-    
-    \item \textbf{Interfaz de Usuario}: Gestiona la comunicación entre el sistema y el estudiante.
+    \item \textbf{Domain Model}: Represents the expert knowledge that the system teaches.
+
+    \item \textbf{Student Model}: Maintains a representation of the learner's cognitive state: what they know, what misconceptions they hold, and how they progress.
+
+    \item \textbf{Pedagogical Model}: Contains instructional strategies and decides what action to take given the student's state and the domain.
+
+    \item \textbf{User Interface}: Manages communication between the system and the student.
 \end{enumerate}
 
-El \textit{student model} merece atención especial porque es el componente que diferencia un ITS de instrucción computarizada convencional. Técnicas como \textit{model tracing} \cite{anderson1995} comparan las acciones del estudiante contra un modelo cognitivo, identificando errores en tiempo real. \textit{Knowledge tracing} \cite{corbett1994} estima probabilísticamente el dominio de habilidades específicas.
+The \textit{student model} deserves special attention because it is the component that differentiates an ITS from conventional computer-assisted instruction. Techniques such as \textit{model tracing} \cite{anderson1995} compare student actions against a cognitive model, identifying errors in real time. \textit{Knowledge tracing} \cite{corbett1994} probabilistically estimates mastery of specific skills.
 
-\subsection{Evidencia de Efectividad}
+\subsection{Effectiveness Evidence}
 
-La efectividad de los ITS está bien documentada mediante múltiples meta-análisis:
+The effectiveness of ITS is well documented through multiple meta-analyses:
 
-\textbf{VanLehn (2011)} \cite{vanlehn2011} comparó 54 estudios y encontró: tutoría humana $d = 0.79$; ITS \textit{step-based} $d = 0.76$; ITS \textit{substep-based} $d = 0.40$; CAI \textit{answer-based} $d = 0.31$. La comparación directa ITS vs. tutoría humana arrojó $g = -0.11$ (no significativo).
+\textbf{VanLehn (2011)} \cite{vanlehn2011} compared 54 studies and found: human tutoring $d = 0.79$; \textit{step-based} ITS $d = 0.76$; \textit{substep-based} ITS $d = 0.40$; \textit{answer-based} CAI $d = 0.31$. The direct comparison of ITS vs. human tutoring yielded $g = -0.11$ (not significant).
 
-\textbf{Kulik y Fletcher (2016)} \cite{kulik2016} analizaron 50 evaluaciones controladas: tamaño de efecto mediano $d = 0.66$; 92\% de evaluaciones mostraron superioridad sobre instrucción convencional.
+\textbf{Kulik and Fletcher (2016)} \cite{kulik2016} analyzed 50 controlled evaluations: median effect size $d = 0.66$; 92\% of evaluations showed superiority over conventional instruction.
 
-\textbf{Ma et al. (2014)} \cite{ma2014} identificaron el \textbf{diagnóstico cognitivo en tiempo real} y la \textbf{remediación adaptativa} como los elementos más críticos para la efectividad de los ITS.
+\textbf{Ma et al. (2014)} \cite{ma2014} identified \textbf{real-time cognitive diagnosis} and \textbf{adaptive remediation} as the most critical elements for ITS effectiveness.
 
-Un hallazgo crucial de VanLehn \cite{vanlehn2011} fue que los tutores \textit{step-based} (que verifican comprensión en cada paso) son significativamente más efectivos que los \textit{answer-based} (que solo evalúan respuestas finales). Este resultado fundamenta el diseño del modelo Bloom 8-Step Interactive de \tdl{}.
+A crucial finding from VanLehn \cite{vanlehn2011} was that \textit{step-based} tutors (which verify comprehension at each step) are significantly more effective than \textit{answer-based} tutors (which only evaluate final answers). This result informs the design of TDL's Bloom 8-Step Interactive model.
 
-\subsection{Herramientas de Autoría}
+\subsection{Authoring Tools}
 
-El desarrollo de ITS históricamente ha requerido entre 200-300 horas de desarrollo por hora de instrucción \cite{murray1999}. Las herramientas de autoría buscan reducir esta barrera.
+Historically, ITS development has required between 200--300 hours of development per hour of instruction \cite{murray1999}. Authoring tools seek to reduce this barrier.
 
-\textbf{CTAT} \cite{aleven2009} introdujo los \textit{Example-Tracing Tutors}, que pueden construirse ``enteramente sin programación'' mediante programación por demostración. Los autores demuestran comportamientos deseados, y el sistema generaliza las reglas.
+\textbf{CTAT} \cite{aleven2009} introduced \textit{Example-Tracing Tutors}, which can be built ``entirely without programming'' through programming by demonstration. Authors demonstrate desired behaviors, and the system generalizes the rules.
 
-\textbf{GIFT} \cite{sottilare2012} implementa una arquitectura modular con separación explícita entre módulo pedagógico y módulo de dominio. Esta separación permite reutilizar estrategias instruccionales entre diferentes dominios de conocimiento.
+\textbf{GIFT} \cite{sottilare2012} implements a modular architecture with explicit separation between pedagogical module and domain module. This separation allows reusing instructional strategies across different knowledge domains.
 
-\textbf{AutoTutor} \cite{graesser2004} pioneró el uso de diálogo en lenguaje natural para tutoría, con tamaños de efecto reportados de 0.4 a 1.5. Su arquitectura incluye un Curriculum Script que organiza las preguntas y un Dialog Advancer que gestiona la conversación.
+\textbf{AutoTutor} \cite{graesser2004} pioneered the use of natural language dialogue for tutoring, with reported effect sizes of 0.4 to 1.5. Its architecture includes a Curriculum Script that organizes questions and a Dialog Advancer that manages the conversation.
 
-Sin embargo, incluso estas herramientas requieren conocimientos técnicos significativos y ecosistemas de software específicos que limitan su adopción fuera de entornos de investigación.
+However, even these tools require significant technical knowledge and specific software ecosystems that limit their adoption outside research environments.
 
-\subsection{La Transición a LLMs}
+\subsection{The Transition to LLMs}
 
-La investigación documenta problemas sistemáticos con LLM como tutores. Tack y Piech \cite{tack2022} encontraron que ``los LLM actuales no son buenos tutores por defecto''. Borchers et al. \cite{borchers2025} confirmaron que GPT-4 ``proporciona retroalimentación excesivamente directa''.
+Research documents systematic problems with LLMs as tutors. Tack and Piech \cite{tack2022} found that ``current LLMs are not good tutors by default.'' Borchers et al. \cite{borchers2025} confirmed that GPT-4 ``provides overly direct feedback.''
 
-Sin embargo, evidencia temprana es prometedora: Pardos y Bhandari \cite{pardos2024} encontraron que hints generados por ChatGPT produjeron 17\% de ganancia de aprendizaje vs. 11.62\% para hints de tutores humanos---sin diferencia significativa. Kestin et al. \cite{kestin2025} reportaron que estudiantes con tutor de IA superaron a aquellos con instrucción activa presencial.
+However, early evidence is promising: Pardos and Bhandari \cite{pardos2024} found that hints generated by ChatGPT produced 17\% learning gain vs. 11.62\% for human tutor hints---no significant difference. Kestin et al. \cite{kestin2025} reported that students with an AI tutor outperformed those receiving in-person active instruction.
 
-\subsection{Lecciones de IMS Learning Design}
+The key insight is that LLMs require explicit pedagogical structuring to function effectively as tutors. Without such structuring, they default to helpful but pedagogically suboptimal behaviors like providing direct answers.
 
-Educational Modeling Language (EML), desarrollado por Rob Koper en Open University of the Netherlands, fue la base de IMS Learning Design (IMS LD v1.0, febrero 2003) \cite{koper2005}. Van Es y Koper demostraron que 16 planes de lección de tradiciones pedagógicas diversas podían codificarse exitosamente en IMS LD.
+\subsection{Lessons from IMS Learning Design}
 
-Sin embargo, Derntl et al. \cite{derntl2012} reportaron: ``IMS LD ha estado disponible desde 2003, y sin embargo no ha sido ampliamente adoptado''. Las causas identificadas fueron:
+Educational Modeling Language (EML), developed by Rob Koper at Open University of the Netherlands, was the basis for IMS Learning Design (IMS LD v1.0, February 2003) \cite{koper2005}. Van Es and Koper demonstrated that 16 lesson plans from diverse pedagogical traditions could be successfully encoded in IMS LD.
+
+However, Derntl et al. \cite{derntl2012} reported: ``IMS LD has been available since 2003, and yet it has not been widely adopted.'' The identified causes were:
 
 \begin{itemize}
-    \item \textbf{Ecosistema inmaduro}: Griffiths et al. \cite{griffiths2005} encontraron que ``el round-tripping entre herramientas no es posible''.
-    \item \textbf{Alto esfuerzo}: Berggren et al. \cite{berggren2005} documentaron relación 3:1 entre preparación y uso.
-    \item \textbf{Desajuste terminológico}: Neumann y Oberhuemer \cite{neumann2008} identificaron que ``los conceptos del lenguaje difieren de los que un maestro usa para planificar''.
+    \item \textbf{Immature ecosystem}: Griffiths et al. \cite{griffiths2005} found that ``round-tripping between tools is not possible.''
+    \item \textbf{High effort}: Berggren et al. \cite{berggren2005} documented a 3:1 ratio between preparation and use.
+    \item \textbf{Terminology mismatch}: Neumann and Oberhuemer \cite{neumann2008} identified that ``the concepts of the language differ from those a teacher uses for planning.''
 \end{itemize}
 
-Crucialmente, Derntl et al. \cite{derntl2012} encontraron que tras 45 minutos de introducción, 78\% de profesores logró conformidad con soluciones expertas. ``La estructura conceptual de IMS LD \textbf{no} impide su uso para autoría''. Las barreras fueron de ecosistema, no conceptuales.
+Crucially, Derntl et al. \cite{derntl2012} found that after 45 minutes of introduction, 78\% of professors achieved conformity with expert solutions. ``The conceptual structure of IMS LD \textbf{does not} impede its use for authoring.'' The barriers were ecosystem-related, not conceptual.
 
-\subsection{Lecciones para TDL}
+These lessons inform TDL design: (1) conceptual simplicity does not guarantee adoption---ecosystem matters; (2) effort must be proportional to perceived benefit; (3) terminology must align with educators' language; (4) portability reduces ecosystem dependency.
 
-La historia de IMS LD sugiere cuatro lecciones para el diseño de \tdl{}:
+\subsection{Prompt Languages: PDL and POML}
 
-\begin{enumerate}
-    \item La simplicidad conceptual no garantiza adopción---el ecosistema importa.
-    \item El esfuerzo debe ser proporcional al beneficio percibido.
-    \item La terminología debe alinearse con el lenguaje que usan los docentes.
-    \item La portabilidad reduce dependencia del ecosistema específico.
-\end{enumerate}
+The field of prompt engineering has recently produced formal languages for structuring LLM interactions.
 
-\tdl{} intenta mitigar estos riesgos: no requiere herramientas especiales (cualquier editor de texto sirve), usa terminología familiar (eventos, unidades, prompts), y funciona en múltiples plataformas LLM comerciales. Sin embargo, hereda el riesgo fundamental de que el esfuerzo de formalización no se perciba proporcional al beneficio.
+IBM Research developed the \textbf{Prompt Declaration Language (PDL)} \cite{ibm2024pdl}, a YAML-based DSL with formal grammar and type system. PDL enables declarative composition of prompts with control flow, variable binding, and function calls.
+
+Microsoft Research proposed \textbf{POML (Prompt Orchestration Markup Language)} \cite{zhang2025poml}, an HTML-inspired markup language with semantic components such as \texttt{<role>} and \texttt{<task>}. POML incorporates advanced features including a CSS-like style system for separating content from presentation, native multimodal data handling, and a template engine with variables, loops, and conditionals.
+
+However, neither PDL nor POML incorporates instructional design concepts: they lack notions such as learning events, pedagogical sequences, or explicit separation between methodology and educational content. They are designed for developers, not educators.
+
+These languages establish a relevant precedent: it is legitimate and useful to create domain-specific languages for structuring LLM interactions. The question is how to do so for the educational domain.
+
+\subsection{ADL 1.0: The Starting Point}
+
+Our prior work with the Assistant Description Language (ADL 1.0) \cite{pernias2025adl} introduced a structured YAML-based language for encoding educational assistants based on LLMs. ADL 1.0 demonstrated that it is possible to capture a teacher's pedagogical expertise in a formal specification that an LLM can faithfully execute.
+
+ADL 1.0 defined four types of pedagogical tools:
+
+\begin{itemize}
+    \item \textbf{Commands} (/command): Self-contained pedagogical actions, from simple explanations to multi-step procedures.
+    \item \textbf{Options} (/option): Modifiers that adjust global behavior without associating to specific content.
+    \item \textbf{Decorators} (+++decorator): Pedagogical styles that modify how a command is executed (e.g., +++socratic transforms any command into guided questions).
+    \item \textbf{Workflows} (/workflow): Automated sequences of commands for complete lessons.
+\end{itemize}
+
+A pilot with 30 students in a Tourism course showed positive results: 70\% used the assistant frequently, 83\% rated responses as useful, and 100\% recommended continued use. Teachers perceived the tool as an extension of their pedagogical practice, not a replacement.
+
+However, as ADL 1.0 was applied to structured educational tutoring, limitations emerged that motivated the development of TDL. These limitations are analyzed in detail in Section~III.
