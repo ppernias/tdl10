@@ -1,94 +1,100 @@
 % ============================================================================
-% IX. CONCLUSIONES Y TRABAJO FUTURO
+% X. CONCLUSIONS AND FUTURE WORK
 % ============================================================================
 
-\section{Conclusiones y Trabajo Futuro}
+\section{Conclusions and Future Work}
 
-\subsection{Resumen de Contribuciones}
+\subsection{Summary of Contributions}
 
-Este artículo ha presentado \tdl{} (Tutor Description Language), una evolución de \adl{} que implementa una arquitectura de cuatro capas para sistemas de tutoría basados en LLM. Las contribuciones principales son:
-
-\begin{enumerate}
-    \item \textbf{Arquitectura desacoplada}: Separación de Engine, Modelo Instruccional, Secuencia de Aprendizaje y Contenido Fuente, permitiendo evolución y reutilización independientes.
-    
-    \item \textbf{Modelo instruccional como componente explícito}: Formalización del ``cómo enseñar'' como secuencia de eventos instruccionales reutilizables, alineados con teorías de Gagné y Bloom.
-    
-    \item \textbf{Separación metodología-contenido}: El mismo modelo instruccional puede aplicarse a cursos de diferentes disciplinas; el mismo contenido puede enseñarse con diferentes metodologías.
-    
-    \item \textbf{Evolución documentada desde ADL}: Análisis de las limitaciones de \adl{} para tutorías y principios de diseño que guiaron \tdl{}.
-    
-    \item \textbf{Especificación formal y herramientas}: Esquemas JSON Schema y validador Python para garantizar correctitud antes del despliegue.
-    
-    \item \textbf{Portabilidad multiplataforma}: Los mismos archivos \tdl{} funcionan en ChatGPT, Claude, Gemini y OpenWebUI sin modificación.
-\end{enumerate}
-
-\tdl{} no pretende ser conceptualmente novedoso, sino pragmáticamente útil: una implementación accesible de principios establecidos, adaptada a la realidad de los LLM actuales.
-
-\subsection{Agenda de Investigación}
-
-La validación empírica de \tdl{} requiere responder preguntas de investigación específicas:
-
-\begin{itemize}
-    \item \textbf{RQ1}: ¿Producen los tutores \tdl{} mayor ganancia de aprendizaje que LLM sin estructura pedagógica formal?
-    \item \textbf{RQ2}: ¿Reduce \tdl{} la carga docente manteniendo o mejorando la calidad de la atención individualizada?
-    \item \textbf{RQ3}: ¿Pueden docentes sin formación técnica avanzada crear tutores \tdl{} funcionales en tiempo razonable?
-    \item \textbf{RQ4}: ¿Qué modelos instruccionales son más efectivos para qué tipos de contenido y población estudiantil?
-\end{itemize}
-
-\subsection{Hipótesis}
-
-Basándonos en la literatura revisada, proponemos las siguientes hipótesis:
-
-\begin{itemize}
-    \item \textbf{H1}: Tutores \tdl{} con modelo Bloom 8-Step producirán mayor ganancia de aprendizaje que LLM con prompt genérico, en contenido técnico.
-    
-    \item \textbf{H2}: Docentes con tutores \tdl{} desplegados reportarán menor tiempo dedicado a atención individualizada repetitiva.
-    
-    \item \textbf{H3}: Docentes sin experiencia previa lograrán crear tutores \tdl{} funcionales en menos de 2 horas de trabajo.
-    
-    \item \textbf{H4}: Los modelos interactivos serán preferidos para contenido conceptual; los expositivos para contenido normativo.
-\end{itemize}
-
-\subsection{Diseño Experimental Propuesto}
-
-Planificamos un estudio cuasi-experimental durante el curso 2025-2026 con tres condiciones:
+This paper has presented \tdl{} (Tutor Description Language), an evolution of \adl{} that implements a four-layer architecture for LLM-based tutoring systems. The main contributions are:
 
 \begin{enumerate}
-    \item \textbf{Grupo TDL}: Estudiantes con acceso a tutor \tdl{} con modelo Bloom 8-Step.
-    \item \textbf{Grupo LLM genérico}: Estudiantes con acceso a ChatGPT/Claude con prompt básico.
-    \item \textbf{Grupo control}: Estudiantes con materiales tradicionales (apuntes, vídeos).
+    \item \textbf{Decoupled architecture}: Separation of Engine, Instructional Model, Learning Sequence, and Content Source, enabling independent evolution and reuse.
+
+    \item \textbf{Instructional model as explicit component}: Formalization of ``how to teach'' as a sequence of reusable instructional events, aligned with Gagn\'{e} and Bloom theories.
+
+    \item \textbf{Methodology-content separation}: The same instructional model can be applied to courses from different disciplines; the same content can be taught with different methodologies.
+
+    \item \textbf{Documented evolution from ADL 1.0}: Analysis of ADL~1.0 limitations for tutoring and design principles that guided \tdl{}.
+
+    \item \textbf{Formal specification and tools}: JSON Schema schemas and Python validator to ensure correctness before deployment.
+
+    \item \textbf{Cross-platform portability}: The same \tdl{} files work on ChatGPT, Claude, Gemini, and OpenWebUI without modification.
+
+    \item \textbf{Alignment with ADL~2.0}: Demonstration that \tdl{} can be expressed as an ADL~2.0 profile, validating both the chronological development path and ADL~2.0's extensibility mechanisms.
 \end{enumerate}
 
-Métricas:
+\tdl{} does not claim to be conceptually novel, but pragmatically useful: an accessible implementation of established principles, adapted to the reality of current LLMs.
+
+\subsection{Research Agenda}
+
+Empirical validation of \tdl{} requires answering specific research questions:
 
 \begin{itemize}
-    \item Ganancia normalizada pre-post en tests de conocimiento.
-    \item Tiempo de estudio auto-reportado.
-    \item Engagement (número y profundidad de interacciones con el tutor).
-    \item Satisfacción estudiantil (escala Likert).
-    \item Carga docente (horas dedicadas a atención individualizada).
+    \item \textbf{RQ1}: Do \tdl{} tutors produce greater learning gains than LLMs without formal pedagogical structure?
+    \item \textbf{RQ2}: Does \tdl{} reduce teaching load while maintaining or improving the quality of individualized attention?
+    \item \textbf{RQ3}: Can teachers without advanced technical training create functional \tdl{} tutors in reasonable time?
+    \item \textbf{RQ4}: Which instructional models are most effective for which types of content and student population?
 \end{itemize}
 
-\subsection{Trabajo Futuro}
+\subsection{Hypotheses}
 
-Identificamos varias direcciones de trabajo futuro:
+Based on the reviewed literature, we propose the following hypotheses:
 
-\textbf{Editor visual (TDL Maker)}: Desarrollo de una herramienta web que permita diseñar secuencias de aprendizaje visualmente, generando el \yamlformat{} automáticamente. Esto eliminaría la barrera sintáctica para docentes sin experiencia técnica.
+\begin{itemize}
+    \item \textbf{H1}: \tdl{} tutors with the Bloom 8-Step model will produce greater learning gains than LLMs with generic prompts, for technical content.
 
-\textbf{Learning analytics}: Integración de hooks para registrar qué eventos se ejecutan, tiempos de respuesta del estudiante, patrones de interacción, y puntos de abandono. Estos datos informarían la mejora iterativa de modelos y secuencias.
+    \item \textbf{H2}: Teachers with deployed \tdl{} tutors will report less time spent on repetitive individualized attention.
 
-\textbf{Repositorio comunitario}: Creación de un repositorio abierto de modelos instruccionales validados, donde diseñadores puedan compartir metodologías y docentes puedan descubrir modelos apropiados para sus necesidades.
+    \item \textbf{H3}: Teachers without prior experience will achieve functional \tdl{} tutors in less than 2 hours of work.
 
-\textbf{Extensiones para evaluación}: Añadir secciones para rúbricas de evaluación, criterios de calificación, y generación automática de informes de progreso estudiantil.
+    \item \textbf{H4}: Interactive models will be preferred for conceptual content; expository models for normative content.
+\end{itemize}
 
-\textbf{Student model ligero}: Explorar la viabilidad de incorporar un modelo del estudiante simplificado, aprovechando la memoria conversacional de los LLM o almacenamiento externo, para habilitar cierta adaptación basada en historial.
+\subsection{Proposed Experimental Design}
 
-\textbf{Integración con LMS}: Desarrollar conectores para integrar tutores \tdl{} con sistemas de gestión del aprendizaje (Moodle, Canvas), permitiendo autenticación, seguimiento de progreso, y sincronización de calificaciones.
+We plan a quasi-experimental study during the 2025-2026 academic year with three conditions:
 
-\subsection{Conclusión Final}
+\begin{enumerate}
+    \item \textbf{TDL group}: Students with access to a \tdl{} tutor using the Bloom 8-Step model.
+    \item \textbf{Generic LLM group}: Students with access to ChatGPT/Claude with a basic prompt.
+    \item \textbf{Control group}: Students with traditional materials (notes, videos).
+\end{enumerate}
 
-La promesa de escalar la educación personalizada mediante IA no se cumplirá solo con modelos de lenguaje más potentes. Requiere métodos para que los educadores transfieran su expertise pedagógica a estos sistemas. \tdl{} ofrece un camino pragmático hacia este objetivo: permite que el ``cómo enseñar'' se formalice como conocimiento reutilizable mientras el ``qué enseñar'' permanece bajo control del docente.
+Metrics:
 
-Al separar responsabilidades en capas bien definidas y alinearse con teorías establecidas de diseño instruccional, \tdl{} facilita la colaboración entre diseñadores instruccionales, docentes y expertos en contenido. El resultado es un marco que amplifica el impacto de los educadores sin comprometer su autoría pedagógica.
+\begin{itemize}
+    \item Normalized gain pre-post on knowledge tests.
+    \item Self-reported study time.
+    \item Engagement (number and depth of interactions with the tutor).
+    \item Student satisfaction (Likert scale).
+    \item Teaching load (hours dedicated to individualized attention).
+\end{itemize}
 
-La validación empírica determinará si las lecciones del pasado (particularmente de IMS Learning Design) han sido aprendidas. \tdl{} es una propuesta en esa dirección, sujeta a escrutinio experimental y mejora iterativa.
+\subsection{Future Work}
+
+We identify several directions for future work:
+
+\textbf{Visual editor (TDL Maker)}: Development of a web tool that allows designing learning sequences visually, automatically generating the \yamlformat{}. This would eliminate the syntactic barrier for teachers without technical experience.
+
+\textbf{Learning analytics}: Integration of hooks to record which events are executed, student response times, interaction patterns, and dropout points. This data would inform iterative improvement of models and sequences.
+
+\textbf{Community repository}: Creation of an open repository of validated instructional models, where designers can share methodologies and teachers can discover models appropriate for their needs.
+
+\textbf{Assessment extensions}: Adding sections for evaluation rubrics, grading criteria, and automatic generation of student progress reports.
+
+\textbf{Lightweight student model}: Exploring the feasibility of incorporating a simplified student model, leveraging LLMs' conversational memory or external storage, to enable some history-based adaptation.
+
+\textbf{LMS integration}: Developing connectors to integrate \tdl{} tutors with learning management systems (Moodle, Canvas), enabling authentication, progress tracking, and grade synchronization.
+
+\textbf{ADL~2.0 profile formalization}: Completing the formal definition of TDL as an ADL~2.0 profile, including schema definitions and validation rules that ensure compliance with both specifications.
+
+\subsection{Final Conclusion}
+
+The promise of scaling personalized education through AI will not be fulfilled solely with more powerful language models. It requires methods for educators to transfer their pedagogical expertise to these systems. \tdl{} offers a pragmatic path toward this goal: it allows ``how to teach'' to be formalized as reusable knowledge while ``what to teach'' remains under the teacher's control.
+
+By separating responsibilities into well-defined layers and aligning with established instructional design theories, \tdl{} facilitates collaboration among instructional designers, teachers, and content experts. The result is a framework that amplifies educators' impact without compromising their pedagogical authorship.
+
+The alignment with ADL~2.0 validates \tdl{}'s architectural decisions as instances of sound software engineering principles, while simultaneously demonstrating that ADL~2.0's extensibility mechanisms are sufficient for real-world domain specializations. This bidirectional validation strengthens confidence in both specifications.
+
+Empirical validation will determine whether the lessons of the past (particularly from IMS Learning Design) have been learned. \tdl{} is a proposal in that direction, subject to experimental scrutiny and iterative improvement.

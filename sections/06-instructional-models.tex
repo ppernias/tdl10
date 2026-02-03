@@ -1,192 +1,191 @@
 % ============================================================================
-% VI. MODELOS INSTRUCCIONALES
+% VI. INSTRUCTIONAL MODELS
 % ============================================================================
+\section{Instructional Models in TDL}
 
-\section{Modelos Instruccionales en TDL}
+The concept of instructional model is central to TDL. This section elaborates on its theoretical foundation and presents the two reference models included in the specification.
 
-El concepto de modelo instruccional es central en \tdl{}. Esta sección profundiza en su fundamentación teórica y presenta los dos modelos de referencia incluidos en la especificación.
+\subsection{The Instructional Event Concept}
 
-\subsection{El Concepto de Evento Instruccional}
+Instructional events in TDL are inspired by Robert Gagn\'{e}'s theory \cite{gagne1985}, who identified nine events that optimize learning. TDL adapts this framework to the context of conversational tutoring, where each event represents a phase with a specific pedagogical purpose.
 
-Los eventos instruccionales en \tdl{} se inspiran en la teoría de Robert Gagné \cite{gagne1985}, quien identificó nueve eventos que optimizan el aprendizaje. \tdl{} adapta este marco al contexto de tutorías conversacionales, donde cada evento representa una fase con propósito pedagógico específico.
-
-La Tabla~\ref{tab:gagne_mapping} muestra la correspondencia entre los eventos de Gagné y los eventos típicos de \tdl{}.
+Table~\ref{tab:gagne_mapping} shows the correspondence between Gagn\'{e}'s events and typical TDL events.
 
 \begin{table}[htbp]
-\caption{Correspondencia entre Eventos de Gagné y TDL}
+\caption{Correspondence Between Gagn\'{e}'s Events and TDL}
 \label{tab:gagne_mapping}
 \centering
 \begin{tabular}{p{3.2cm}p{3.5cm}}
 \toprule
-\textbf{Evento de Gagné} & \textbf{Evento TDL} \\
+\textbf{Gagn\'{e}'s Event} & \textbf{TDL Event} \\
 \midrule
-Ganar atención & Attention / Activate \\
-Informar objetivos & Objectives \\
-Estimular recuerdo & Recall / Activate \\
-Presentar contenido & Explain / Present \\
-Proporcionar guía & Guidance / Elaborate \\
-Elicitar desempeño & Practice / Elicit \\
-Dar retroalimentación & Verify / Feedback \\
-Evaluar desempeño & Assess \\
-Mejorar retención & Summary / Transfer \\
+Gain attention & Attention / Activate \\
+Inform objectives & Objectives \\
+Stimulate recall & Recall / Activate \\
+Present content & Explain / Present \\
+Provide guidance & Guidance / Elaborate \\
+Elicit performance & Practice / Elicit \\
+Provide feedback & Verify / Feedback \\
+Assess performance & Assess \\
+Enhance retention & Summary / Transfer \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Esta correspondencia no es rígida: \tdl{} permite flexibilidad en cómo se organizan los eventos, siempre que mantengan coherencia pedagógica.
+This correspondence is not rigid: TDL allows flexibility in how events are organized, as long as they maintain pedagogical coherence.
 
-\subsection{Relación con Transaction Shells}
+\subsection{Relationship with Transaction Shells}
 
-Los modelos instruccionales de \tdl{} son funcionalmente análogos a los \textit{transaction shells} de Merrill \cite{merrill1991}: algoritmos pedagógicos reutilizables para diferentes contenidos. Un transaction shell especifica la secuencia de interacciones sin conocer el contenido específico; el modelo instruccional de \tdl{} hace exactamente lo mismo.
+TDL's instructional models are functionally analogous to Merrill's \textit{transaction shells} \cite{merrill1991}: reusable pedagogical algorithms for different contents. A transaction shell specifies the sequence of interactions without knowing the specific content; TDL's instructional model does exactly the same.
 
-Esta analogía refuerza que \tdl{} no introduce conceptos nuevos, sino que implementa principios establecidos en un contexto tecnológico nuevo (LLMs).
+This analogy reinforces that TDL does not introduce new concepts, but implements established principles in a new technological context (LLMs).
 
-\subsection{Modelo de Referencia: Bloom 8-Step Interactive}
+\subsection{Reference Model: Bloom 8-Step Interactive}
 
-El modelo Bloom 8-Step Interactive implementa un enfoque socrático donde el tutor verifica constantemente la comprensión antes de avanzar. Su filosofía central es: \textbf{``Never advance without verification''} (nunca avanzar sin verificar).
+The Bloom 8-Step Interactive model implements a Socratic approach where the tutor constantly verifies comprehension before advancing. Its central philosophy is: \textbf{``Never advance without verification.''}
 
-Este diseño se alinea con la evidencia de VanLehn \cite{vanlehn2011}: los tutores \textit{step-based} ($d = 0.76$) superan significativamente a los \textit{answer-based} ($d = 0.31$).
+This design aligns with VanLehn's evidence \cite{vanlehn2011}: \textit{step-based} tutors ($d = 0.76$) significantly outperform \textit{answer-based} tutors ($d = 0.31$).
 
-A pesar del nombre ``8-Step'', el modelo implementa 10 eventos para mayor granularidad en la verificación:
+Despite the ``8-Step'' name, the model implements 10 events for greater verification granularity:
 
 \begin{table}[htbp]
-\caption{Eventos del Modelo Bloom 8-Step Interactive}
+\caption{Events of the Bloom 8-Step Interactive Model}
 \label{tab:bloom_events}
 \centering
 \begin{tabular}{clp{2.8cm}}
 \toprule
-\textbf{ID} & \textbf{Evento} & \textbf{Propósito} \\
+\textbf{ID} & \textbf{Event} & \textbf{Purpose} \\
 \midrule
-E1 & ACTIVATE & Activar conocimiento previo \\
-E2 & OBJECTIVES & Presentar objetivos \\
-E3 & EXPLAIN & Presentar contenido \\
-E4 & VERIFY\_EXPLAIN & Verificar comprensión inicial \\
-E5 & ELABORATE & Profundizar si correcto \\
-E6 & VERIFY\_ELABORATE & Verificar profundización \\
-E7 & PRACTICE & Práctica guiada \\
-E8 & VERIFY\_PRACTICE & Verificar práctica \\
-E9 & SUMMARY & Resumen y conexiones \\
-E10 & CLOSE & Cierre y transición \\
+E1 & ACTIVATE & Activate prior knowledge \\
+E2 & OBJECTIVES & Present objectives \\
+E3 & EXPLAIN & Present content \\
+E4 & VERIFY\_EXPLAIN & Verify initial comprehension \\
+E5 & ELABORATE & Deepen if correct \\
+E6 & VERIFY\_ELABORATE & Verify deepening \\
+E7 & PRACTICE & Guided practice \\
+E8 & VERIFY\_PRACTICE & Verify practice \\
+E9 & SUMMARY & Summary and connections \\
+E10 & CLOSE & Closure and transition \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsubsection{Características del Modelo}
+\subsubsection{Model Characteristics}
 
 \begin{itemize}
-    \item \textbf{Verificación continua}: Cada explicación (E3, E5) va seguida de verificación (E4, E6).
-    \item \textbf{Feedback inmediato}: El tutor evalúa cada respuesta antes de continuar.
-    \item \textbf{Progresión cognitiva}: De recuerdo a comprensión, de comprensión a aplicación, de aplicación a síntesis (alineado con taxonomía de Bloom \cite{anderson2001}).
-    \item \textbf{Detección de misconceptions}: E1 identifica conocimiento incorrecto antes de enseñar.
+    \item \textbf{Continuous verification}: Each explanation (E3, E5) is followed by verification (E4, E6).
+    \item \textbf{Immediate feedback}: The tutor evaluates each response before continuing.
+    \item \textbf{Cognitive progression}: From recall to comprehension, from comprehension to application, from application to synthesis (aligned with Bloom's taxonomy \cite{anderson2001}).
+    \item \textbf{Misconception detection}: E1 identifies incorrect knowledge before teaching.
 \end{itemize}
 
-\subsubsection{Casos de Uso Ideales}
+\subsubsection{Ideal Use Cases}
 
-Este modelo es ideal para:
+This model is ideal for:
 
 \begin{itemize}
-    \item Conceptos técnicos complejos donde cada concepto es prerequisito del siguiente.
-    \item Dominios donde los errores conceptuales son costosos (medicina, ingeniería, derecho).
-    \item Estudiantes que necesitan guía activa y verificación frecuente.
-    \item Situaciones donde la comprensión profunda es más importante que la cobertura amplia.
+    \item Complex technical concepts where each concept is a prerequisite for the next.
+    \item Domains where conceptual errors are costly (medicine, engineering, law).
+    \item Students who need active guidance and frequent verification.
+    \item Situations where deep understanding is more important than broad coverage.
 \end{itemize}
 
-\subsection{Modelo de Referencia: Expository}
+\subsection{Reference Model: Expository}
 
-El modelo Expository implementa un enfoque de clase magistral estructurada, basado directamente en los nueve eventos de Gagné. El tutor expone el contenido de forma organizada antes de solicitar participación activa.
+The Expository model implements a structured lecture approach, based directly on Gagn\'{e}'s nine events. The tutor presents content in an organized manner before requesting active participation.
 
-Su filosofía es: \textbf{``Transmisión estructurada''} ---presentación organizada con verificaciones concentradas al final.
+Its philosophy is: \textbf{``Structured transmission''}---organized presentation with verifications concentrated at the end.
 
 \begin{table}[htbp]
-\caption{Eventos del Modelo Expository (basado en Gagné)}
+\caption{Events of the Expository Model (based on Gagn\'{e})}
 \label{tab:expository_events}
 \centering
 \begin{tabular}{clp{3cm}}
 \toprule
-\textbf{ID} & \textbf{Evento} & \textbf{Propósito} \\
+\textbf{ID} & \textbf{Event} & \textbf{Purpose} \\
 \midrule
-E1 & ATTENTION & Captar atención inicial \\
-E2 & OBJECTIVES & Informar objetivos \\
-E3 & RECALL & Estimular recuerdo previo \\
-E4 & PRESENT & Presentar contenido \\
-E5 & GUIDANCE & Proporcionar guía \\
-E6 & ELICIT & Elicitar desempeño \\
-E7 & FEEDBACK & Dar retroalimentación \\
-E8 & ASSESS & Evaluar desempeño \\
-E9 & TRANSFER & Mejorar retención \\
+E1 & ATTENTION & Capture initial attention \\
+E2 & OBJECTIVES & Inform objectives \\
+E3 & RECALL & Stimulate prior recall \\
+E4 & PRESENT & Present content \\
+E5 & GUIDANCE & Provide guidance \\
+E6 & ELICIT & Elicit performance \\
+E7 & FEEDBACK & Provide feedback \\
+E8 & ASSESS & Assess performance \\
+E9 & TRANSFER & Enhance retention \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsubsection{Diferencias con el Modelo Interactivo}
+\subsubsection{Differences from the Interactive Model}
 
-La diferencia clave es que el tutor puede dar exposiciones más largas (5-8 párrafos) antes de pausar para interacción. El estudiante tiene un rol más receptivo inicialmente, con participación activa concentrada en E6-E8.
+The key difference is that the tutor can give longer expositions (5--8 paragraphs) before pausing for interaction. The student has a more receptive role initially, with active participation concentrated in E6--E8.
 
-\subsubsection{Casos de Uso Ideales}
+\subsubsection{Ideal Use Cases}
 
-Este modelo es ideal para:
+This model is ideal for:
 
 \begin{itemize}
-    \item Contenido normativo, legal o regulatorio donde la precisión es crítica.
-    \item Primera exposición a un tema completamente nuevo.
-    \item Cobertura rápida de material introductorio o contextual.
-    \item Estudiantes que prefieren recibir información completa antes de interactuar.
+    \item Normative, legal, or regulatory content where precision is critical.
+    \item First exposure to a completely new topic.
+    \item Rapid coverage of introductory or contextual material.
+    \item Students who prefer receiving complete information before interacting.
 \end{itemize}
 
-\subsection{Creación de Modelos Personalizados}
+\subsection{Creating Custom Models}
 
-\tdl{} no limita a los docentes a los modelos de referencia. Un diseñador instruccional puede crear modelos personalizados siguiendo este proceso:
+TDL does not limit teachers to reference models. An instructional designer can create custom models following this process:
 
 \begin{enumerate}
-    \item Identificar la filosofía pedagógica guía.
-    \item Dibujar la secuencia de eventos en papel.
-    \item Definir qué ocurre en cada fase y su propósito.
-    \item Definir cuándo se pasa a la siguiente (triggers).
-    \item Escribir instrucciones detalladas para cada evento.
+    \item Identify the guiding pedagogical philosophy.
+    \item Draw the event sequence on paper.
+    \item Define what happens in each phase and its purpose.
+    \item Define when to advance to the next (triggers).
+    \item Write detailed instructions for each event.
 \end{enumerate}
 
-Por ejemplo, el modelo 5E (Engage, Explore, Explain, Elaborate, Evaluate) para indagación científica:
+For example, the 5E model (Engage, Explore, Explain, Elaborate, Evaluate) for scientific inquiry:
 
 \begin{lstlisting}
 model:
   id: "5e-inquiry"
   name: "5E Inquiry Model"
-  philosophy: "Discovery through guided 
+  philosophy: "Discovery through guided
                exploration"
-  
+
   events:
     - id: "E1_ENGAGE"
       name: "Engage"
       instructions: |
-        Captura atencion con pregunta
-        provocadora o fenomeno intrigante.
-        NO reveles la respuesta todavia.
+        Capture attention with a provocative
+        question or intriguing phenomenon.
+        Do NOT reveal the answer yet.
       transition_trigger:
         condition: "student_response_received"
         next_event: "E2_EXPLORE"
-    
+
     - id: "E2_EXPLORE"
       name: "Explore"
       instructions: |
-        Guia al estudiante a descubrir
-        por si mismo mediante preguntas
-        orientadoras. NO des respuestas
-        directas en esta fase.
+        Guide the student to discover on
+        their own through guiding questions.
+        Do NOT give direct answers in
+        this phase.
       transition_trigger:
         condition: "exploration_complete"
         next_event: "E3_EXPLAIN"
 \end{lstlisting}
 
-La creación de modelos personalizados abre la posibilidad de un \textbf{repositorio comunitario} donde diseñadores instruccionales compartan metodologías validadas que otros docentes puedan aplicar directamente a sus cursos.
+Custom model creation opens the possibility of a \textbf{community repository} where instructional designers share validated methodologies that other teachers can apply directly to their courses.
 
-\subsection{Limitaciones de los Modelos}
+\subsection{Model Limitations}
 
-Es importante reconocer las limitaciones de los modelos instruccionales en \tdl{}:
+It is important to recognize the limitations of instructional models in TDL:
 
 \begin{itemize}
-    \item \textbf{Secuencia predefinida}: Los modelos definen secuencias que se repiten para cada unidad. No hay ramificación condicional basada en el desempeño del estudiante.
-    \item \textbf{Sin diagnóstico cognitivo}: Los modelos no detectan misconceptions específicas más allá de lo que el LLM puede inferir conversacionalmente.
-    \item \textbf{Dependencia del LLM}: La calidad de ejecución depende de cuán fielmente el LLM siga las instrucciones. Modelos más capaces (GPT-4, Claude 3) producen mejores resultados.
+    \item \textbf{Predefined sequence}: Models define sequences that repeat for each unit. There is no conditional branching based on student performance.
+    \item \textbf{No cognitive diagnosis}: Models do not detect specific misconceptions beyond what the LLM can infer conversationally.
+    \item \textbf{LLM dependence}: Execution quality depends on how faithfully the LLM follows instructions. More capable models (GPT-4, Claude 3) produce better results.
 \end{itemize}
 
-Estas limitaciones son deliberadas: mantienen \tdl{} simple y portable. Funcionalidades más avanzadas requerirían infraestructura que contradice el objetivo de despliegue sobre plataformas comerciales existentes.
+These limitations are deliberate: they keep TDL simple and portable. More advanced functionalities would require infrastructure that contradicts the goal of deployment on existing commercial platforms.

@@ -3,11 +3,173 @@
 % ============================================================================
 \section{Alignment with ADL 2.0}
 
-% TODO: This section will be written after completing the other sections
-% Content outline:
-% - A. How limitations identified in TDL informed ADL 2.0
-% - B. Pedagogical decoupling as a test case
-% - C. TDL as an ADL 2.0 Profile
-% - D. Implications for other domains
+This section demonstrates that TDL's design decisions align with ADL~2.0's architectural principles, validating both the chronological development path (ADL~1.0 $\rightarrow$ TDL $\rightarrow$ ADL~2.0) and the claim that TDL can be formally expressed as an ADL~2.0 profile.
 
-\textit{[Section to be completed]}
+\subsection{From TDL Limitations to ADL 2.0 Solutions}
+
+As discussed in Section~III, TDL development identified five structural limitations in ADL~1.0. Three of these limitations (L1, L4, L5) were general enough to warrant solutions at the ADL core level, while two (L2, L3) required domain-specific extensions.
+
+Table~\ref{tab:limitation_solutions} shows how each limitation is addressed.
+
+\begin{table}[htbp]
+\caption{Resolution of ADL 1.0 Limitations}
+\label{tab:limitation_solutions}
+\centering
+\begin{tabular}{p{2.4cm}p{2.2cm}p{2.5cm}}
+\toprule
+\textbf{Limitation} & \textbf{Scope} & \textbf{Solution} \\
+\midrule
+L1. Monolithic architecture & General & ADL 2.0 Core/Profile separation \\
+\addlinespace
+L4. Implicit boundaries & General & ADL 2.0 boundaries as first-class element \\
+\addlinespace
+L5. No inheritance & General & ADL 2.0 \texttt{extends} mechanism \\
+\addlinespace
+L2. Implicit pedagogy & Domain-specific & TDL Instructional Model layer \\
+\addlinespace
+L3. Embedded content & Domain-specific & TDL Content Source layer \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This distribution validates ADL~2.0's design philosophy: the core specification provides minimal, domain-agnostic infrastructure (separation, boundaries, inheritance), while domain-specific profiles add the abstractions needed for their particular context.
+
+\subsection{TDL as an ADL 2.0 Profile}
+
+We now demonstrate that TDL can be formally expressed as an ADL~2.0 profile. The mapping follows directly from the architectural correspondence.
+
+\subsubsection{Core Inheritance}
+
+A TDL specification would declare itself as extending the ADL~2.0 core:
+
+\begin{lstlisting}
+# TDL expressed as ADL 2.0 Profile
+adl_version: "2.0"
+profile: "tdl-educational"
+
+extends: "adl-2.0-core"
+
+# TDL-specific extensions
+instructional_model:
+  # ... model definition
+learning_sequence:
+  # ... sequence definition
+content_source:
+  # ... content reference
+\end{lstlisting}
+
+\subsubsection{Mapping TDL Layers to ADL 2.0 Components}
+
+Table~\ref{tab:tdl_adl2_mapping} shows the correspondence between TDL layers and ADL~2.0 structural elements.
+
+\begin{table}[htbp]
+\caption{TDL Layers as ADL 2.0 Components}
+\label{tab:tdl_adl2_mapping}
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{TDL Layer} & \textbf{ADL 2.0 Equivalent} \\
+\midrule
+Engine & Core execution semantics \\
+Instructional Model & Profile-defined component \\
+Learning Sequence & Profile-defined component \\
+Content Source & External reference (knowledge) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Engine's functionality corresponds to the execution semantics defined in the ADL~2.0 core. The Instructional Model and Learning Sequence are profile-specific components that TDL defines for the educational domain. Content Source leverages ADL~2.0's support for external knowledge references.
+
+\subsubsection{Inheritance Demonstration}
+
+TDL's model inheritance (learning sequences extending instructional models) maps directly to ADL~2.0's \texttt{extends} mechanism:
+
+\begin{lstlisting}
+# ADL 2.0 style inheritance in TDL
+learning_sequence:
+  extends: "bloom-8-step-interactive"
+
+  # Override or extend parent model
+  tutor_profile:
+    domain: "Constitutional Law"
+
+  units:
+    - id: "unit_01"
+      # Inherits event structure from model
+      # Provides domain-specific content
+\end{lstlisting}
+
+This demonstrates that TDL's inheritance pattern is a specialization of ADL~2.0's general inheritance mechanism, not an incompatible alternative.
+
+\subsection{Pedagogical Decoupling as Validation}
+
+TDL's central contribution---the decoupling of instructional methodology from domain content---serves as a validation case for ADL~2.0's extensibility.
+
+\subsubsection{The Decoupling Pattern}
+
+TDL separates three concerns that ADL~1.0 conflated:
+
+\begin{enumerate}
+    \item \textbf{How to execute}: The Engine (shared across all TDL tutors)
+    \item \textbf{How to teach}: The Instructional Model (reusable across courses)
+    \item \textbf{What to teach}: The Content Source (course-specific)
+\end{enumerate}
+
+This separation allows a single instructional methodology (e.g., Bloom 8-Step Interactive) to be applied to courses in Law, Programming, Biology, or any other domain without modification.
+
+\subsubsection{ADL 2.0 Enables This Pattern}
+
+ADL~2.0's architectural features directly enable TDL's decoupling:
+
+\begin{itemize}
+    \item \textbf{Core/Profile separation}: Allows TDL to define educational abstractions (Instructional Model, Learning Sequence) as profile extensions without modifying the core.
+
+    \item \textbf{Declarative inheritance}: Enables learning sequences to inherit from instructional models cleanly.
+
+    \item \textbf{External references}: Supports the Content Source layer as a separate, updatable resource.
+\end{itemize}
+
+The fact that TDL's pedagogical decoupling can be expressed within ADL~2.0's framework validates the claim that ADL~2.0 provides a sufficiently flexible foundation for domain-specific specializations.
+
+\subsection{Implications for Other Domains}
+
+TDL demonstrates a pattern that other domains can follow: identify domain-specific abstractions, implement them as profile extensions, and leverage ADL~2.0's core mechanisms for shared concerns.
+
+\subsubsection{Potential Domain Profiles}
+
+The TDL pattern suggests similar profiles for other domains:
+
+\begin{itemize}
+    \item \textbf{Healthcare}: Decoupling clinical protocol (methodology) from patient data (content)
+
+    \item \textbf{Legal}: Decoupling argumentation style from case specifics
+
+    \item \textbf{Customer Service}: Decoupling interaction patterns from product knowledge
+\end{itemize}
+
+Each domain would define its own layers analogous to TDL's Instructional Model and Content Source, while inheriting ADL~2.0's core infrastructure.
+
+\subsubsection{The Profile Ecosystem}
+
+This analysis supports the vision of an ADL~2.0 profile ecosystem where:
+
+\begin{enumerate}
+    \item Domain experts identify reusable patterns in their field
+    \item These patterns are formalized as ADL~2.0 profiles
+    \item Practitioners specialize profiles for their specific use cases
+    \item The community shares and refines validated profiles
+\end{enumerate}
+
+TDL is the first complete example of this ecosystem pattern, demonstrating its viability.
+
+\subsection{Bidirectional Validation}
+
+The relationship between TDL and ADL~2.0 provides bidirectional validation:
+
+\begin{itemize}
+    \item \textbf{TDL validates ADL~2.0}: The fact that TDL's complex pedagogical decoupling can be expressed as an ADL~2.0 profile confirms that ADL~2.0's extensibility mechanisms are sufficient for real-world domain specializations.
+
+    \item \textbf{ADL~2.0 validates TDL}: The alignment with ADL~2.0's principled architecture confirms that TDL's design decisions were not ad-hoc solutions but instances of sound software engineering principles (separation of concerns, inheritance, modularity).
+\end{itemize}
+
+This bidirectional relationship strengthens confidence in both specifications and supports their adoption by the respective communities.
