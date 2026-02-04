@@ -56,7 +56,7 @@ Interface & Engine + LLM platform \\
 \end{tabular}
 \end{table}
 
-The absence of a \textit{student model} is a deliberate limitation: TDL does not aim to diagnose the student's cognitive state, but to structure pedagogical interaction coherently. The underlying LLM provides some conversational adaptation, but not the systematic tracking of a traditional ITS.
+The absence of a \textit{student model} is a deliberate limitation: TDL does not aim to diagnose the student's cognitive state but rather to structure pedagogical interactions coherently. The underlying LLM provides some conversational adaptation but not the systematic tracking of a traditional ITS.
 
 \subsection{Layer 1: Engine (Interpretation Engine)}
 
@@ -65,9 +65,9 @@ The Engine (current version 1.2) is the most stable component of the architectur
 The Engine defines four fundamental aspects:
 
 \begin{itemize}
-    \item \textbf{Command syntax}: Defines commands such as \texttt{/start} (begin first unit), \texttt{/next} (advance to next unit), and \texttt{/progress} (show current state).
+    \item \textbf{Command syntax}: Defines commands such as \texttt{/start} (begin the first unit), \texttt{/next} (advance to the next unit), and \texttt{/progress} (show the current state).
 
-    \item \textbf{State tracking mechanism}: Uses explicit markers with format \texttt{[UNIT:\{id\}|EVENT:\{id\}]} to maintain context between conversation turns.
+    \item \textbf{State tracking mechanism}: Uses explicit markers in the format \texttt{[UNIT:\{id\}|EVENT:\{id\}]} to maintain context between conversation turns.
 
     \item \textbf{Prompt format}: Specifies how to combine instructional model instructions with learning sequence content.
 
@@ -86,14 +86,14 @@ Each instructional model defines:
 
 \begin{itemize}
     \item \textbf{Name and description}: Identification and explanation of pedagogical philosophy.
-    \item \textbf{Event sequence}: Ordered list of steps the tutor must follow.
+    \item \textbf{Event sequence}: An ordered list of steps the tutor must follow.
     \item \textbf{Instructions per event}: What the tutor should do at each event.
-    \item \textbf{Transition triggers}: What condition triggers advancement to the next event.
+    \item \textbf{Transition triggers}: The conditions that trigger advancement to the next event.
 \end{itemize}
 
 An instructional model is completely reusable: the same Bloom 8-Step Interactive model can be applied to a Law course, a Programming course, and a Biology course. Specific content is provided in lower layers.
 
-This concept is functionally analogous to Merrill's \textit{transaction shells} \cite{merrill1991}: reusable pedagogical algorithms for different contents.
+This concept is functionally analogous to Merrill's \textit{transaction shells} \cite{merrill1991}: reusable pedagogical algorithms for different content.
 
 \subsection{Layer 3: Learning Sequence}
 
@@ -102,9 +102,9 @@ The Learning Sequence defines the specific structure of a course or lesson. This
 A learning sequence specifies:
 
 \begin{itemize}
-    \item \textbf{Tutor profile}: Knowledge domain, role, style, supported languages.
+    \item \textbf{Tutor profile}: Knowledge domain, role, style, and supported languages.
     \item \textbf{Model inheritance}: Which instructional model to use (via \texttt{extends}).
-    \item \textbf{Behaviors}: Initial greeting, help response, off-topic handling, disclaimers.
+    \item \textbf{Behaviors}: Initial greetings, help responses, off-topic handling, and disclaimers.
     \item \textbf{Tools}: Commands available to the student (/start, /progress).
     \item \textbf{Learning units}: Course structure with objectives, event-specific prompts, and navigation between units.
 \end{itemize}
@@ -113,7 +113,7 @@ The sequence inherits the methodology from the instructional model but provides 
 
 \subsection{Layer 4: Content Source}
 
-The Content Source is the subject matter expert's material: notes, texts, references. This layer is optional (sequence prompts can contain content directly), but is especially useful for:
+The Content Source is the subject matter expert's material: notes, texts, and references. This layer is optional (sequence prompts can contain content directly), but is especially useful for:
 
 \begin{itemize}
     \item Extensive content that does not fit comfortably in prompts.
@@ -121,7 +121,7 @@ The Content Source is the subject matter expert's material: notes, texts, refere
     \item Situations where the content expert and instructional designer are different people.
 \end{itemize}
 
-TDL supports multiple content source formats: Markdown (recommended), plain text, PDF, Word. The learning sequence references specific content sections via the \texttt{source\_section} field.
+TDL supports multiple content source formats: Markdown (recommended), plain text, PDF, and Word. The learning sequence references specific content sections via the \texttt{source\_section} field.
 
 \subsection{Data Flow and Interaction}
 
@@ -166,7 +166,7 @@ The process follows these steps:
 
 \begin{enumerate}
     \item The student sends a message (e.g., ``Hello'' or \texttt{/start}).
-    \item The Engine interprets the message and determines current context (unit, event).
+    \item The Engine interprets the message and determines the current context (unit, event).
     \item The Engine locates the Learning Sequence in the platform's knowledge base.
     \item The Sequence indicates which Instructional Model to use via \texttt{extends}.
     \item The Engine loads the model's events (E1, E2, ...).
